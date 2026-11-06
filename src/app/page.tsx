@@ -1,69 +1,365 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import CoinCapture, { type CapturedSide } from "@/components/CoinCapture";
+import CropEditor from "@/components/CropEditor";
+import DebugPanel from "@/components/DebugPanel";
+import ListingForm from "@/components/ListingForm";
+import ListingPreview from "@/components/ListingPreview";
+import Logo from "@/components/Logo";
+import { canvasToJpeg, detectCoin, renderCrop, resizedJpeg, type CropCircle } from "@/lib/autoCrop";
+import type { CoinListing } from "@/lib/coinSchema";
+import type { CoinBox, LocateResult } from "@/lib/locateSchema";
+import { log } from "@/lib/log";
+import { SAMPLE_LISTING } from "@/lib/sampleListing";
+
+type Status = "idle" | "loading" | "done" | "error";
+type SideKey = "front" | "back";
+type SideCrop = { circle: CropCircle; full: string; small: string };
+type Crops = Record<SideKey, SideCrop>;
+
+const LOADING_TIPS = [
+  "Finding the coin in each photo…",
+  "Cropping both sides…",
+  "Reading the date and mint mark…",
+  "Comparing against known varieties…",
+  "Estimating grade and wear…",
+  "Checking for cleaning or damage…",
+  "Writing your eBay listing…",
+];
+
+/** Convert the AI's fractional bounding box into a circle in source-canvas pixels. */
+function circleFromBox(box: CoinBox, src: HTMLCanvasElement): CropCircle {
+  const left = box.left * src.width;
+  const right = box.right * src.width;
+  const top = box.top * src.height;
+  const bottom = box.bottom * src.height;
+  return {
+    cx: (left + right) / 2,
+    cy: (top + bottom) / 2,
+    r: Math.max(right - left, bottom - top) / 2,
+    detected: true,
+  };
+}
+
+/** Render the final listing photo (1200px) and the smaller copy sent to the AI. */
+function renderSide(side: CapturedSide, circle: CropCircle): SideCrop {
+  const full = renderCrop(side.src, circle, { size: 1200, maskBackground: true });
+  return { circle, full: canvasToJpeg(full, 0.92), small: resizedJpeg(full, 896) };
+}
+
+function Steps({ front, back, done }: { front: boolean; back: boolean; done: boolean }) {
+  const steps = [
+    { label: "Front", on: front },
+    { label: "Back", on: back },
+    { label: "Listing", on: done },
+  ];
+  return (
+    <ol className="grid grid-cols-3 gap-2" aria-label="Progress">
+      {steps.map((s) => (
+        <li key={s.label}>
+          <div
+            className={`h-1.5 rounded-full transition-all duration-500 ${
+              s.on ? "bg-gold-400 shadow-[0_0_14px_rgba(236,193,79,0.6)]" : "bg-white/10"
+            }`}
+          />
+          <span className={`eyebrow mt-2 block ${s.on ? "text-gold-300" : ""}`}>{s.label}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function LoadingOverlay({ phase }: { phase: number }) {
+  // Tips advance on a timer but never lag behind the real phase of the pipeline.
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setTick((n) => Math.min(n + 1, LOADING_TIPS.length - 1)), 3200);
+    return () => clearInterval(t);
+  }, []);
+  const i = Math.max(tick, phase);
+  return (
+    <div
+      role="status"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-ink-950/85 px-6 backdrop-blur-md"
+    >
+      <div className="perspective relative">
+        <span className="absolute inset-0 animate-pulse-ring rounded-full bg-gold-400/30" />
+        <Logo size={96} className="animate-coin-spin drop-shadow-[0_0_30px_rgba(236,193,79,0.45)]" />
+      </div>
+      <div className="text-center">
+        <p className="font-display text-2xl font-semibold text-cream-100">Examining your coin</p>
+        <p key={i} className="mt-2 animate-fade-up text-sm text-cream-500">
+          {LOADING_TIPS[i]}
+        </p>
+      </div>
+      <p className="text-xs text-cream-500/70">Usually under a minute</p>
+    </div>
+  );
+}
 
 export default function Home() {
+  const [front, setFront] = useState<CapturedSide | null>(null);
+  const [back, setBack] = useState<CapturedSide | null>(null);
+  const [hints, setHints] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [phase, setPhase] = useState(0);
+  const [listing, setListing] = useState<CoinListing | null>(null);
+  const [crops, setCrops] = useState<Crops | null>(null);
+  const [editing, setEditing] = useState<SideKey | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const ready = Boolean(front && back) && status !== "loading";
+  const showListing = status === "done" && listing && crops;
+  const sides: Record<SideKey, CapturedSide | null> = { front, back };
+
+  async function postJson<T>(url: string, body: unknown): Promise<T & { requestId?: string }> {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    let data: (T & { error?: string; requestId?: string }) | null = null;
+    try {
+      data = await res.json();
+    } catch (e) {
+      log.error("api", `${url}: response ${res.status} was not JSON`, e);
+    }
+    if (!res.ok || !data) {
+      log.error("api", `${url} failed with HTTP ${res.status}`, { error: data?.error, requestId: data?.requestId });
+      throw new Error(data?.error ?? `Request failed (${res.status})`);
+    }
+    return data;
+  }
+
+  async function identify() {
+    if (!front || !back) return;
+    setStatus("loading");
+    setPhase(0);
+    setError(null);
+    const t0 = performance.now();
+    const demo = new URLSearchParams(window.location.search).has("demo");
+    try {
+      // 1. Ask the AI where the coin is in each photo.
+      let circles: Record<SideKey, CropCircle>;
+      if (demo) {
+        log.info("locate", "Demo mode: using local detection instead of the API");
+        await new Promise((r) => setTimeout(r, 1500));
+        circles = { front: detectCoin(front.src), back: detectCoin(back.src) };
+      } else {
+        log.info("locate", "Asking the AI to locate the coin", {
+          frontKB: Math.round(front.locateUrl.length / 1365),
+          backKB: Math.round(back.locateUrl.length / 1365),
+        });
+        const loc = await postJson<LocateResult>("/api/locate", { front: front.locateUrl, back: back.locateUrl });
+        log.info("locate", `AI located the coin in ${Math.round(performance.now() - t0)} ms`, loc);
+        circles = {
+          front: loc.front.found ? circleFromBox(loc.front, front.src) : detectCoin(front.src),
+          back: loc.back.found ? circleFromBox(loc.back, back.src) : detectCoin(back.src),
+        };
+        if (!loc.front.found) log.warn("locate", "AI did not find the front coin; using local fallback", loc.front.notes);
+        if (!loc.back.found) log.warn("locate", "AI did not find the back coin; using local fallback", loc.back.notes);
+      }
+
+      // 2. Crop both sides at full resolution.
+      setPhase(1);
+      const tCrop = performance.now();
+      const next: Crops = { front: renderSide(front, circles.front), back: renderSide(back, circles.back) };
+      setCrops(next);
+      log.info("crop", `Cropped both sides in ${Math.round(performance.now() - tCrop)} ms`, {
+        front: { cx: Math.round(circles.front.cx), cy: Math.round(circles.front.cy), r: Math.round(circles.front.r) },
+        back: { cx: Math.round(circles.back.cx), cy: Math.round(circles.back.cy), r: Math.round(circles.back.r) },
+      });
+
+      // 3. Identify from the crops.
+      setPhase(2);
+      if (demo) {
+        log.info("identify", "Demo mode: using sample listing instead of calling the API");
+        await new Promise((r) => setTimeout(r, 2000));
+        setListing(SAMPLE_LISTING);
+      } else {
+        log.info("identify", "Sending both crops to /api/identify", {
+          frontKB: Math.round(next.front.small.length / 1365),
+          backKB: Math.round(next.back.small.length / 1365),
+          hints: hints.trim().length ? `${hints.trim().length} chars` : "none",
+        });
+        const tId = performance.now();
+        const data = await postJson<{ listing: CoinListing; usage?: unknown }>("/api/identify", {
+          front: next.front.small,
+          back: next.back.small,
+          hints,
+        });
+        log.info("identify", `Listing received in ${Math.round(performance.now() - tId)} ms`, {
+          requestId: data.requestId,
+          usage: data.usage,
+          identified: data.listing.identified,
+          confidence: data.listing.confidence,
+          title: data.listing.title,
+        });
+        setListing(data.listing);
+      }
+      log.info("identify", `Whole flow done in ${Math.round(performance.now() - t0)} ms`);
+      setStatus("done");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      if (!(e instanceof Error && e.message)) log.error("identify", "Unexpected failure", e);
+      setError(e instanceof Error ? e.message : "Something went wrong");
+      setStatus("error");
+    }
+  }
+
+  function applyManualCrop(side: SideKey, circle: CropCircle) {
+    const captured = sides[side];
+    if (!captured || !crops) return;
+    log.info("crop", `Manual re-crop of ${side}`, {
+      cx: Math.round(circle.cx),
+      cy: Math.round(circle.cy),
+      r: Math.round(circle.r),
+    });
+    setCrops({ ...crops, [side]: renderSide(captured, circle) });
+    setEditing(null);
+  }
+
+  function startOver() {
+    log.info("app", "Start over");
+    setFront(null);
+    setBack(null);
+    setHints("");
+    setListing(null);
+    setCrops(null);
+    setEditing(null);
+    setError(null);
+    setStatus("idle");
+    window.scrollTo({ top: 0 });
+  }
+
+  const editingSide = editing ? sides[editing] : null;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-44 pt-[max(1.25rem,env(safe-area-inset-top))]">
+      {status === "loading" && <LoadingOverlay phase={phase} />}
+      {editing && editingSide && crops && (
+        <CropEditor
+          title={`Fix ${editing} crop`}
+          src={editingSide.src}
+          srcUrl={editingSide.srcUrl}
+          initial={crops[editing].circle}
+          onDone={(c) => applyManualCrop(editing, c)}
+          onCancel={() => setEditing(null)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      )}
+
+      <header className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Logo size={44} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
+          <div>
+            <h1 className="font-display text-[28px] font-semibold leading-none tracking-tight">
+              <span className="gold-text">Coin</span>
+              <span className="text-cream-100">Lens</span>
+            </h1>
+            <p className="mt-1 text-xs text-cream-500">Snap. Identify. List.</p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="flex items-center gap-2">
+          {(front || back || listing) && (
+            <button
+              type="button"
+              onClick={startOver}
+              className="btn-ghost rounded-full px-3.5 py-1.5 text-xs font-medium"
+            >
+              Start over
+            </button>
+          )}
+          <DebugPanel />
         </div>
-      </main>
-    </div>
+      </header>
+
+      <Steps front={Boolean(front)} back={Boolean(back)} done={Boolean(showListing)} />
+
+      {showListing ? (
+        <div className="flex animate-fade-up flex-col gap-5">
+          <ListingPreview
+            listing={listing}
+            front={crops.front.full}
+            back={crops.back.full}
+            onFixCrop={(side) => setEditing(side)}
+          />
+          <ListingForm listing={listing} onChange={setListing} front={crops.front.full} back={crops.back.full} />
+        </div>
+      ) : (
+        <>
+          {!front && !back && (
+            <div className="animate-fade-up">
+              <h2 className="font-display text-[34px] font-medium leading-[1.05] tracking-tight text-cream-100">
+                Two photos.
+                <br />
+                <span className="italic gold-text">One ready-to-post listing.</span>
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-cream-300">
+                Add the front and back of any coin. CoinLens finds and crops the coin, identifies it,
+                grades it, and writes the title, description and item specifics for eBay.
+              </p>
+            </div>
+          )}
+
+          <CoinCapture
+            step={1}
+            label="Front"
+            sublabel="obverse"
+            hint="Plain, contrasting background, good light, fill the frame."
+            value={front}
+            onChange={setFront}
+          />
+          <CoinCapture
+            step={2}
+            label="Back"
+            sublabel="reverse"
+            hint="Flip it over and shoot the other side the same way."
+            value={back}
+            onChange={setBack}
+          />
+
+          <section className="card p-5">
+            <label className="block">
+              <span className="mb-2 flex items-baseline gap-2">
+                <span className="font-display text-lg font-semibold">Anything you know?</span>
+                <span className="text-xs text-cream-500">optional</span>
+              </span>
+              <textarea
+                value={hints}
+                onChange={(e) => setHints(e.target.value)}
+                rows={2}
+                placeholder="e.g. from a German estate lot, weighs 27 g, came in a 2x2 marked “1921 S”"
+                className="input-dark"
+              />
+            </label>
+          </section>
+
+          {error && (
+            <p className="animate-fade-up rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </p>
+          )}
+
+          <div className="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-ink-900 via-ink-900/95 to-transparent px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-10">
+            <div className="mx-auto max-w-lg">
+              <button
+                type="button"
+                disabled={!ready}
+                onClick={identify}
+                className="btn-gold w-full rounded-2xl px-4 py-4 text-base font-semibold"
+              >
+                Identify coin & build listing
+              </button>
+              {!ready && status !== "loading" && (
+                <p className="mt-2 text-center text-xs text-cream-500">
+                  {front || back ? "One more side to go" : "Add both sides to continue"}
+                </p>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </main>
   );
 }

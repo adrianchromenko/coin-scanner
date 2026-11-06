@@ -1,0 +1,12 @@
+{
+  "name": "CoinLens",
+  "short_name": "CoinLens",
+  "description": "Snap both sides of a coin and get an eBay-ready listing.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e18",
+  "theme_color": "#0a0e18",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

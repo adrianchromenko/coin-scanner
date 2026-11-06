@@ -1,0 +1,21 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# In the Render dashboard: New → Blueprint → pick this repo. Render reads this
+# file and creates the service. The only thing you must enter by hand is the
+# ANTHROPIC_API_KEY value (it is marked sync: false so it never lives in git).
+services:
+  - type: web
+    name: coinlens
+    runtime: node
+    plan: free
+    branch: master
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
