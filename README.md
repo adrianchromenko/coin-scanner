@@ -33,6 +33,8 @@ The free plan works. Note that a free service sleeps after 15 minutes without tr
 
 - The API key never leaves the server; the browser only talks to `/api/locate`, `/api/identify` and `/api/log`.
 - Grades and values are AI estimates from photos. Treat them as a starting point, not an appraisal.
+- Blur is caught twice. At upload a Laplacian focus measure over the centre of the photo blocks clearly blurry shots (thresholds in `src/lib/photoCheck.ts`, with a "Use anyway" override). At Identify, the locate call also asks the model to flag blur, glare, darkness, cut-off or obstructed coins; if anything is flagged the app shows the crops and offers a retake before spending on identification.
+- Share previews and SEO: Open Graph and Twitter tags, a generated share image, an iOS home-screen icon, robots.txt and sitemap.xml come from `src/app/layout.tsx` and the metadata files next to it. The public origin comes from `NEXT_PUBLIC_SITE_URL` (set in `render.yaml`) or Render's `RENDER_EXTERNAL_URL`.
 - Nothing is cropped at upload. On Identify, the model returns a bounding box for each photo, the browser crops at full resolution, and the crops go to the model for identification. "Fix front/back crop" on the result screen opens a manual circle editor.
 - There is no login. Anyone with the deployed URL can run identifications against your API key, so keep the link private or add auth before sharing it widely.
 

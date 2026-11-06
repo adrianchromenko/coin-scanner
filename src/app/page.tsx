@@ -9,14 +9,18 @@ import ListingPreview from "@/components/ListingPreview";
 import Logo from "@/components/Logo";
 import { canvasToJpeg, detectCoin, renderCrop, resizedJpeg, type CropCircle } from "@/lib/autoCrop";
 import type { CoinListing } from "@/lib/coinSchema";
-import type { CoinBox, LocateResult } from "@/lib/locateSchema";
+import { ISSUE_LABEL, type CoinBox, type LocateResult, type PhotoIssue } from "@/lib/locateSchema";
 import { log } from "@/lib/log";
+import { sharpness } from "@/lib/photoCheck";
 import { SAMPLE_LISTING } from "@/lib/sampleListing";
 
-type Status = "idle" | "loading" | "done" | "error";
+type Status = "idle" | "loading" | "review" | "done" | "error";
 type SideKey = "front" | "back";
 type SideCrop = { circle: CropCircle; full: string; small: string };
 type Crops = Record<SideKey, SideCrop>;
+/** Human-readable photo problems per side, found after the coin was located. */
+type Review = Record<SideKey, string[]>;
+const SIDES: SideKey[] = ["front", "back"];
 
 const LOADING_TIPS = [
   "Finding the coin in each photo…",
@@ -107,11 +111,15 @@ export default function Home() {
   const [listing, setListing] = useState<CoinListing | null>(null);
   const [crops, setCrops] = useState<Crops | null>(null);
   const [editing, setEditing] = useState<SideKey | null>(null);
+  const [review, setReview] = useState<Review | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const ready = Boolean(front && back) && status !== "loading";
+  const blocked = Boolean(front?.blocking || back?.blocking);
+  const ready = Boolean(front && back) && !blocked && status !== "loading";
   const showListing = status === "done" && listing && crops;
+  const showReview = status === "review" && review && crops;
   const sides: Record<SideKey, CapturedSide | null> = { front, back };
+  const setSide: Record<SideKey, (v: CapturedSide | null) => void> = { front: setFront, back: setBack };
 
   async function postJson<T>(url: string, body: unknown): Promise<T & { requestId?: string }> {
     const res = await fetch(url, {
@@ -132,16 +140,82 @@ export default function Home() {
     return data;
   }
 
+  function fail(e: unknown) {
+    if (!(e instanceof Error && e.message)) log.error("identify", "Unexpected failure", e);
+    setError(e instanceof Error ? e.message : "Something went wrong");
+    setStatus("error");
+  }
+
+  /** Step 3: send the crops to the AI and show the listing. */
+  async function buildListing(next: Crops, demo: boolean, t0: number) {
+    setStatus("loading");
+    setPhase(2);
+    if (demo) {
+      log.info("identify", "Demo mode: using sample listing instead of calling the API");
+      await new Promise((r) => setTimeout(r, 2000));
+      setListing(SAMPLE_LISTING);
+    } else {
+      log.info("identify", "Sending both crops to /api/identify", {
+        frontKB: Math.round(next.front.small.length / 1365),
+        backKB: Math.round(next.back.small.length / 1365),
+        hints: hints.trim().length ? `${hints.trim().length} chars` : "none",
+      });
+      const tId = performance.now();
+      const data = await postJson<{ listing: CoinListing; usage?: unknown }>("/api/identify", {
+        front: next.front.small,
+        back: next.back.small,
+        hints,
+      });
+      log.info("identify", `Listing received in ${Math.round(performance.now() - tId)} ms`, {
+        requestId: data.requestId,
+        usage: data.usage,
+        identified: data.listing.identified,
+        confidence: data.listing.confidence,
+        title: data.listing.title,
+      });
+      setListing(data.listing);
+    }
+    log.info("identify", `Whole flow done in ${Math.round(performance.now() - t0)} ms`);
+    setStatus("done");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /** The user looked at the photo problems and wants the listing anyway. */
+  async function continueAnyway() {
+    if (!crops) return;
+    log.warn("quality", "User kept photos with problems", review);
+    const demo = new URLSearchParams(window.location.search).has("demo");
+    try {
+      await buildListing(crops, demo, performance.now());
+    } catch (e) {
+      fail(e);
+    }
+  }
+
+  /** Throw away one side's photo and go back to the capture screen for it. */
+  function retake(side: SideKey) {
+    log.info("quality", `Retake ${side} photo`);
+    setSide[side](null);
+    setCrops(null);
+    setListing(null);
+    setReview(null);
+    setError(null);
+    setStatus("idle");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function identify() {
     if (!front || !back) return;
     setStatus("loading");
     setPhase(0);
     setError(null);
+    setReview(null);
     const t0 = performance.now();
     const demo = new URLSearchParams(window.location.search).has("demo");
     try {
       // 1. Ask the AI where the coin is in each photo.
       let circles: Record<SideKey, CropCircle>;
+      const aiIssues: Record<SideKey, PhotoIssue[]> = { front: [], back: [] };
       if (demo) {
         log.info("locate", "Demo mode: using local detection instead of the API");
         await new Promise((r) => setTimeout(r, 1500));
@@ -159,6 +233,8 @@ export default function Home() {
         };
         if (!loc.front.found) log.warn("locate", "AI did not find the front coin; using local fallback", loc.front.notes);
         if (!loc.back.found) log.warn("locate", "AI did not find the back coin; using local fallback", loc.back.notes);
+        aiIssues.front = loc.front.issues ?? [];
+        aiIssues.back = loc.back.issues ?? [];
       }
 
       // 2. Crop both sides at full resolution.
@@ -171,40 +247,28 @@ export default function Home() {
         back: { cx: Math.round(circles.back.cx), cy: Math.round(circles.back.cy), r: Math.round(circles.back.r) },
       });
 
-      // 3. Identify from the crops.
-      setPhase(2);
-      if (demo) {
-        log.info("identify", "Demo mode: using sample listing instead of calling the API");
-        await new Promise((r) => setTimeout(r, 2000));
-        setListing(SAMPLE_LISTING);
-      } else {
-        log.info("identify", "Sending both crops to /api/identify", {
-          frontKB: Math.round(next.front.small.length / 1365),
-          backKB: Math.round(next.back.small.length / 1365),
-          hints: hints.trim().length ? `${hints.trim().length} chars` : "none",
-        });
-        const tId = performance.now();
-        const data = await postJson<{ listing: CoinListing; usage?: unknown }>("/api/identify", {
-          front: next.front.small,
-          back: next.back.small,
-          hints,
-        });
-        log.info("identify", `Listing received in ${Math.round(performance.now() - tId)} ms`, {
-          requestId: data.requestId,
-          usage: data.usage,
-          identified: data.listing.identified,
-          confidence: data.listing.confidence,
-          title: data.listing.title,
-        });
-        setListing(data.listing);
+      // 2b. Photo quality, now that we know exactly where the coin is. The AI's
+      // verdict decides (it reads the lettering); the local focus number over the
+      // coin is logged only, because smooth or worn coins score low without being blurry.
+      const problems: Review = { front: [], back: [] };
+      for (const side of SIDES) {
+        const captured = sides[side]!;
+        const focus = Math.round(sharpness(captured.src, circles[side]));
+        problems[side] = aiIssues[side].map((i) => ISSUE_LABEL[i]);
+        log.info("quality", `${side}: coin focus ${focus}, AI issues ${aiIssues[side].join(", ") || "none"}`);
       }
-      log.info("identify", `Whole flow done in ${Math.round(performance.now() - t0)} ms`);
-      setStatus("done");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (problems.front.length || problems.back.length) {
+        log.warn("quality", "Photo problems found; asking the user before building the listing", problems);
+        setReview(problems);
+        setStatus("review");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      // 3. Identify from the crops.
+      await buildListing(next, demo, t0);
     } catch (e) {
-      if (!(e instanceof Error && e.message)) log.error("identify", "Unexpected failure", e);
-      setError(e instanceof Error ? e.message : "Something went wrong");
-      setStatus("error");
+      fail(e);
     }
   }
 
@@ -228,9 +292,66 @@ export default function Home() {
     setListing(null);
     setCrops(null);
     setEditing(null);
+    setReview(null);
     setError(null);
     setStatus("idle");
     window.scrollTo({ top: 0 });
+  }
+
+  /** Card listing the problems found with each photo, with a retake button per side. */
+  function photoProblems(compact = false) {
+    if (!review || !crops) return null;
+    const bad = SIDES.filter((s) => review[s].length);
+    if (!bad.length) return null;
+    return (
+      <section className={`card border-red-400/30 ${compact ? "p-4" : "p-5"}`}>
+        {!compact && (
+          <>
+            <p className="eyebrow text-red-300">Photo check</p>
+            <h2 className="font-display mt-1 text-2xl font-semibold leading-tight">
+              {bad.length === 2 ? "Both photos need another go" : `The ${bad[0]} photo needs another go`}
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-cream-300">
+              Buyers judge a coin by its photos. A blurry or dark picture gets fewer bids, so it is worth a retake
+              before the listing is written.
+            </p>
+          </>
+        )}
+        {compact && <p className="eyebrow text-red-300">Photo warning</p>}
+        <ul className={`flex flex-col gap-3 ${compact ? "mt-2" : "mt-4"}`}>
+          {bad.map((side) => (
+            <li key={side} className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={crops[side].full}
+                alt={`${side} crop`}
+                className={`shrink-0 rounded-full bg-white ring-2 ring-red-400/60 ${compact ? "h-12 w-12" : "h-16 w-16"}`}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold capitalize text-cream-100">{side}</p>
+                <p className="text-xs text-cream-500">{review[side].join(" · ")}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => retake(side)}
+                className="btn-gold shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold"
+              >
+                Retake {side}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {!compact && (
+          <button
+            type="button"
+            onClick={continueAnyway}
+            className="btn-ghost mt-4 w-full rounded-xl px-4 py-2.5 text-sm font-medium"
+          >
+            Use these photos anyway
+          </button>
+        )}
+      </section>
+    );
   }
 
   const editingSide = editing ? sides[editing] : null;
@@ -276,8 +397,16 @@ export default function Home() {
 
       <Steps front={Boolean(front)} back={Boolean(back)} done={Boolean(showListing)} />
 
-      {showListing ? (
+      {showReview ? (
         <div className="flex animate-fade-up flex-col gap-5">
+          {photoProblems()}
+          {error && (
+            <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</p>
+          )}
+        </div>
+      ) : showListing ? (
+        <div className="flex animate-fade-up flex-col gap-5">
+          {photoProblems(true)}
           <ListingPreview
             listing={listing}
             front={crops.front.full}
@@ -353,7 +482,11 @@ export default function Home() {
               </button>
               {!ready && status !== "loading" && (
                 <p className="mt-2 text-center text-xs text-cream-500">
-                  {front || back ? "One more side to go" : "Add both sides to continue"}
+                  {blocked
+                    ? "Retake the blurry photo to continue"
+                    : front || back
+                      ? "One more side to go"
+                      : "Add both sides to continue"}
                 </p>
               )}
             </div>

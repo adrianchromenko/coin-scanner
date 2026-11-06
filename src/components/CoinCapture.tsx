@@ -13,6 +13,8 @@ export type CapturedSide = {
   /** ~1024px JPEG sent to the AI to locate the coin */
   locateUrl: string;
   check: PhotoAssessment | null;
+  /** true while a blocking problem (e.g. blur) has not been overridden by the user */
+  blocking: boolean;
   fileName: string;
 };
 
@@ -100,11 +102,14 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
       } catch (e) {
         log.error(`capture:${label}`, "Photo check failed to run", e);
       }
+      const blocking = check?.checks.some((c) => !c.ok && c.severity === "block") ?? false;
+      if (blocking) log.warn(`capture:${label}`, "Photo blocked: blurry, asking for a retake");
       onChange({
         src,
         srcUrl: scaledJpeg(src, 1000, 0.8),
         locateUrl: scaledJpeg(src, 1024, 0.85),
         check,
+        blocking,
         fileName: file.name,
       });
       log.info(`capture:${label}`, `Ready in ${Math.round(performance.now() - t0)} ms total`);
@@ -124,8 +129,15 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
     onChange(null);
   }
 
+  function useAnyway() {
+    if (!value) return;
+    log.warn(`capture:${label}`, "User chose to keep a blurry photo");
+    onChange({ ...value, blocking: false });
+  }
+
   const warnings = value?.check?.checks.filter((c) => !c.ok) ?? [];
-  const done = Boolean(value);
+  const blocked = Boolean(value?.blocking);
+  const done = Boolean(value) && !blocked;
 
   return (
     <section className="card p-5">
@@ -226,27 +238,45 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
               <img
                 src={value.srcUrl}
                 alt={`${label} photo`}
-                className="h-24 w-24 rounded-2xl object-cover ring-2 ring-gold-400/50 shadow-[0_12px_30px_-12px_rgba(236,193,79,0.45)]"
+                className={`h-24 w-24 rounded-2xl object-cover ring-2 ${
+                  blocked
+                    ? "ring-red-400/70"
+                    : "ring-gold-400/50 shadow-[0_12px_30px_-12px_rgba(236,193,79,0.45)]"
+                }`}
               />
-              <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-gold-400 text-ink-950 ring-4 ring-ink-900">
-                <CheckIcon className="h-3.5 w-3.5" />
+              <span
+                className={`absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full ring-4 ring-ink-900 ${
+                  blocked ? "bg-red-500 text-white" : "bg-gold-400 text-ink-950"
+                }`}
+              >
+                {blocked ? <span className="text-sm font-bold">!</span> : <CheckIcon className="h-3.5 w-3.5" />}
               </span>
             </div>
             <div className="min-w-0">
-              <p className="font-display text-lg font-semibold">Photo added</p>
+              <p className="font-display text-lg font-semibold">{blocked ? "Blurry photo" : "Photo added"}</p>
               <p className="text-sm text-cream-500">
-                {value.src.width}×{value.src.height} · cropped by AI when you identify
+                {blocked
+                  ? "Please retake it so your listing looks sharp."
+                  : `${value.src.width}×${value.src.height} · cropped by AI when you identify`}
               </p>
             </div>
           </div>
 
           {warnings.length > 0 && (
-            <div className="rounded-xl border border-gold-400/35 bg-gold-400/[0.07] px-3.5 py-3">
-              <p className="eyebrow mb-1.5">Photo check</p>
+            <div
+              className={`rounded-xl border px-3.5 py-3 ${
+                blocked ? "border-red-400/40 bg-red-500/10" : "border-gold-400/35 bg-gold-400/[0.07]"
+              }`}
+            >
+              <p className={`eyebrow mb-1.5 ${blocked ? "text-red-300" : ""}`}>Photo check</p>
               <ul className="flex flex-col gap-1.5">
                 {warnings.map((c) => (
                   <li key={c.key} className="flex gap-2 text-sm">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold-400 text-[10px] font-bold text-ink-950">
+                    <span
+                      className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
+                        c.severity === "block" ? "bg-red-500 text-white" : "bg-gold-400 text-ink-950"
+                      }`}
+                    >
                       !
                     </span>
                     <span>
@@ -256,9 +286,20 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
                   </li>
                 ))}
               </ul>
-              <button type="button" onClick={reset} className="btn-ghost mt-3 w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
-                Retake for a better photo
-              </button>
+              {blocked ? (
+                <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
+                  <button type="button" onClick={reset} className="btn-gold rounded-xl px-4 py-2.5 text-sm font-semibold">
+                    Retake photo
+                  </button>
+                  <button type="button" onClick={useAnyway} className="btn-ghost rounded-xl px-4 py-2.5 text-sm font-medium">
+                    Use anyway
+                  </button>
+                </div>
+              ) : (
+                <button type="button" onClick={reset} className="btn-ghost mt-3 w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
+                  Retake for a better photo
+                </button>
+              )}
             </div>
           )}
         </div>

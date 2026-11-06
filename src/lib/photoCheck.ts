@@ -9,9 +9,19 @@ import type { CropCircle } from "./autoCrop";
 export type PhotoCheck = {
   key: "found" | "inFrame" | "size" | "contrast" | "sharp" | "exposure" | "glare";
   ok: boolean;
+  /** "block": the photo should not be used for a listing without an explicit override. */
+  severity?: "block" | "warn";
   label: string;
   advice?: string;
 };
+
+/**
+ * Laplacian-variance thresholds. Calibrated 2026-11-06: real iPhone coin photos
+ * score 485–1821; the synthetic test image scores 183; a 1 px blur on a
+ * 1600 px photo drops it to ~60 and 2 px to ~17.
+ */
+export const SHARP_BLOCK = 80;
+export const SHARP_WARN = 150;
 
 export type PhotoAssessment = {
   ok: boolean;
@@ -26,7 +36,7 @@ function median(values: number[]): number {
 }
 
 /** Variance of the Laplacian over a square canvas; higher = sharper. */
-function sharpness(src: HTMLCanvasElement, circle: CropCircle, size = 400): number {
+export function sharpness(src: HTMLCanvasElement, circle: CropCircle, size = 400): number {
   const c = document.createElement("canvas");
   c.width = size;
   c.height = size;
@@ -190,9 +200,16 @@ export function assessPhoto(src: HTMLCanvasElement, circle: CropCircle): PhotoAs
     },
     {
       key: "sharp",
-      ok: sharp >= 30,
-      label: sharp >= 30 ? "Sharp and in focus" : "Looks blurry",
-      advice: sharp >= 30 ? undefined : "Hold still, tap the coin on screen to focus, and keep the phone 15–20 cm away.",
+      ok: sharp >= SHARP_WARN,
+      severity: sharp < SHARP_BLOCK ? "block" : "warn",
+      label:
+        sharp >= SHARP_WARN ? "Sharp and in focus" : sharp >= SHARP_BLOCK ? "Could be sharper" : "Blurry photo",
+      advice:
+        sharp >= SHARP_WARN
+          ? undefined
+          : sharp >= SHARP_BLOCK
+            ? "Fine detail looks soft. Tap the coin on screen to focus and hold still before you shoot."
+            : "Buyers skip listings with blurry photos. Tap the coin on screen to focus, hold still, and keep the phone 15–20 cm away.",
     },
     {
       key: "exposure",

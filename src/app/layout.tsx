@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { SITE_URL } from "@/lib/siteUrl";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -11,12 +12,43 @@ const fraunces = Fraunces({
   style: ["normal", "italic"],
 });
 
+const TITLE = "CoinLens — snap a coin, get an eBay-ready listing";
+const DESCRIPTION =
+  "Photograph both sides of any coin and CoinLens finds it, crops it, identifies the date, mint and variety, estimates the grade and value, and writes your eBay title, description and item specifics in about a minute.";
+
 export const metadata: Metadata = {
-  title: "CoinLens — snap a coin, get a listing",
-  description:
-    "Photograph both sides of a coin, auto-crop it, and get an AI-written eBay-ready listing in a minute.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: TITLE, template: "%s · CoinLens" },
+  description: DESCRIPTION,
+  applicationName: "CoinLens",
+  keywords: [
+    "coin identifier",
+    "coin scanner app",
+    "identify coin from photo",
+    "coin grading app",
+    "sell coins on eBay",
+    "eBay coin listing generator",
+    "coin value estimator",
+    "numismatics",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "CoinLens",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  robots: { index: true, follow: true },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "CoinLens", statusBarStyle: "black-translucent" },
+  category: "shopping",
 };
 
 export const viewport: Viewport = {

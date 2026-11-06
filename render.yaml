@@ -19,3 +19,6 @@ services:
         sync: false
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
+      # Public origin for canonical / share-preview URLs. Change this if you add a custom domain.
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://coinlens-h71x.onrender.com

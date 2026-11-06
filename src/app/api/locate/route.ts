@@ -16,7 +16,9 @@ Use three decimals. Measure the rim itself, not shadows, holders, flips, fingers
 
 If the coin is partly outside the frame, still return the box clipped to 0..1 and set found to true.
 If several coins are visible, choose the largest, most central one.
-If there is no coin, set found to false and all edges to 0.`;
+If there is no coin, set found to false and all edges to 0.
+
+Also judge each photo as a marketplace listing photo and list its issues. Be strict about "blurry": look at the lettering, date, and fine design lines — if they are soft, smeared or not legible at the photo's resolution, the photo is blurry. Report "glare" only when a bright reflection hides part of the design, "too_dark" when the design is hard to make out, "cut_off" when part of the rim is outside the frame, "obstructed" when fingers, a holder or anything else covers part of the coin, and "busy_background" when the background is cluttered or patterned. Leave issues empty for a good photo.`;
 
 type ImageMediaType = "image/jpeg" | "image/png" | "image/webp" | "image/gif";
 
