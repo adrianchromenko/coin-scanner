@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AccountButton from "@/components/AccountButton";
 import CoinCapture, { type CapturedSide } from "@/components/CoinCapture";
 import CropEditor from "@/components/CropEditor";
 import DebugPanel from "@/components/DebugPanel";
 import ListingForm from "@/components/ListingForm";
 import ListingPreview from "@/components/ListingPreview";
 import Logo from "@/components/Logo";
+import SaveCoinButton from "@/components/SaveCoinButton";
 import { canvasToJpeg, detectCoin, renderCrop, resizedJpeg, type CropCircle } from "@/lib/autoCrop";
 import type { CoinListing } from "@/lib/coinSchema";
 import { ISSUE_LABEL, type CoinBox, type LocateResult, type PhotoIssue } from "@/lib/locateSchema";
@@ -391,6 +393,7 @@ export default function Home() {
               Start over
             </button>
           )}
+          <AccountButton />
           <DebugPanel />
         </div>
       </header>
@@ -413,6 +416,7 @@ export default function Home() {
             back={crops.back.full}
             onFixCrop={(side) => setEditing(side)}
           />
+          <SaveCoinButton listing={listing} hints={hints} front={crops.front.full} back={crops.back.full} />
           <ListingForm listing={listing} onChange={setListing} front={crops.front.full} back={crops.back.full} />
         </div>
       ) : (

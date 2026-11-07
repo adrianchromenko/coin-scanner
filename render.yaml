@@ -22,3 +22,13 @@ services:
       # Public origin for canonical / share-preview URLs. Change this if you add a custom domain.
       - key: NEXT_PUBLIC_SITE_URL
         value: https://coinlens-h71x.onrender.com
+      # Firebase web config for accounts + "My coins" (Project settings -> Your apps -> Web app).
+      # Set these in the Render dashboard; the build bakes them into the browser bundle.
+      - key: NEXT_PUBLIC_FIREBASE_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_APP_ID
+        sync: false

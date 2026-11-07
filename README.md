@@ -22,6 +22,17 @@ The repo contains a `render.yaml` blueprint, so the service is created from the 
 
 The free plan works. Note that a free service sleeps after 15 minutes without traffic and takes about a minute to wake up on the next visit. Server logs appear in the Render **Logs** tab (the local `logs/app.log` file is not kept between restarts).
 
+## Accounts and "My coins" (Firebase)
+
+Signed-in users can save each scanned coin (listing + both photos) and come back to it at `/coins`. This is optional: with no Firebase settings the app runs exactly as before and the account UI is hidden.
+
+1. In the [Firebase console](https://console.firebase.google.com) create a project (the free Spark plan is enough) and add a **Web app** to it.
+2. **Authentication → Sign-in method**: enable **Email/Password** and **Google**. Under **Settings → Authorized domains** add your Render host (for example `coinlens-h71x.onrender.com`).
+3. **Firestore Database → Create database** (production mode), then publish the rules from `firestore.rules` (paste them in the Rules tab, or run `firebase deploy --only firestore:rules`).
+4. Copy the web app config (Project settings → Your apps) into `.env.local` locally and into the Render **Environment** tab: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID` (storage bucket and sender id are optional). Redeploy; the values are baked in at build time.
+
+Data model: `users/{uid}/coins/{coinId}` holds the listing, status (saved / listed / sold) and a small thumbnail; `users/{uid}/coins/{coinId}/images/full` holds the two 800 px photos as JPEG data URLs, so no Cloud Storage bucket is needed. The rules only let a user read and write their own `users/{uid}` tree.
+
 ## How it works
 
 1. **Capture**: `src/components/CoinCapture.tsx` opens the phone camera (or gallery), decodes the photo honoring EXIF rotation, and runs the detector.

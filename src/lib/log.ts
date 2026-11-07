@@ -141,6 +141,9 @@ export function installGlobalErrorLogging() {
   });
 }
 
+/** Server render and hydration always see an empty log; entries appear on the first client render. */
+const EMPTY: LogEntry[] = [];
+
 export function useLogEntries(): LogEntry[] {
   return useSyncExternalStore(
     (cb) => {
@@ -148,7 +151,7 @@ export function useLogEntries(): LogEntry[] {
       return () => listeners.delete(cb);
     },
     () => snapshot,
-    () => snapshot,
+    () => EMPTY,
   );
 }
 
