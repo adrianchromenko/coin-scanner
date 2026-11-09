@@ -500,7 +500,7 @@ export default function Home() {
                 value={hints}
                 onChange={(e) => setHints(e.target.value)}
                 rows={2}
-                placeholder="e.g. from a German estate lot, weighs 27 g, came in a 2x2 marked “1921 S”"
+                placeholder="e.g. from Grandpa’s collection, weighs 26.7 g, came in a 2x2 marked “1921 S Morgan”"
                 className="input-dark"
               />
             </label>
