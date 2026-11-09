@@ -16,7 +16,7 @@ gradients, no 3D, no gloss, no bevel, no drop shadow, no handle, no dollar sign,
 
 THE NAME (right):
 "CoinLens" as ONE word in a bold, slightly condensed geometric grotesque with tight letter-spacing
-(match Bricolage Grotesque ExtraBold as closely as you can). "Coin" in warm cream #f3ede1,
+(match Poppins ExtraBold as closely as you can). "Coin" in warm cream #f3ede1,
 "Lens" in verdigris #4fd1b5. Directly beneath it, small and plain, the tagline
 "Know what you're holding." in muted cream #9a917f, sentence case, with the period.
 The mark is about 1.6 times the cap height of the word, vertically centred on the word, with a gap

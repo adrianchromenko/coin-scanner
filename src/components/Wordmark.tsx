@@ -32,7 +32,7 @@ export default function Wordmark({ size = 44, tagline = TAGLINE, className }: Pr
           className="block h-auto select-none"
           style={{ width: wordWidth }}
         />
-        {tagline && <p className="mt-1 text-[11px] leading-snug text-cream-500">{tagline}</p>}
+        {tagline && <p className="mt-1 text-[11px] font-medium leading-snug text-cream-500">{tagline}</p>}
       </div>
     </div>
   );

@@ -459,7 +459,7 @@ export default function Home() {
           {!front && !back && (
             <div className="animate-fade-up">
               <p className="eyebrow mb-3 text-patina-300">Pocket change to paid</p>
-              <h2 className="font-display text-[38px] font-extrabold leading-[0.98] tracking-[-0.035em] text-cream-100">
+              <h2 className="font-display text-[36px] font-extrabold leading-[1.02] tracking-[-0.03em] text-cream-100">
                 Two photos.
                 <br />
                 <span className="patina-text">One listing,</span>

@@ -8,8 +8,8 @@
             progress, links and the primary action: everything about *looking*.
   - gold:   antique brass. Used for money and value only, so a price always
             reads as a price.
-  Display type is Bricolage Grotesque; labels and numbers use the mono face,
-  like a ledger.
+  One brand face, Poppins (the typeface of the drawn wordmark), for display and
+  body; labels and numbers use the mono face, like a ledger.
 */
 @theme {
   --color-ink-950: #070605;
@@ -36,8 +36,8 @@
   --color-gold-600: #8f6619;
   --color-gold-700: #5e400a;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
   --animate-coin-spin: coin-spin 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
@@ -99,7 +99,7 @@ body::before {
   color: var(--color-cream-100);
 }
 
-/* Display type: tight, slightly condensed, with Bricolage's optical sizing on. */
+/* Display type: Poppins, set tight. */
 .font-display {
   font-variation-settings: "opsz" 48;
   letter-spacing: -0.02em;
