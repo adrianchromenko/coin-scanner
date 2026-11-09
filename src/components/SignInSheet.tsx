@@ -12,7 +12,6 @@ import {
 } from "firebase/auth";
 import { firebase } from "@/lib/firebase/client";
 import { log } from "@/lib/log";
-import Logo from "./Logo";
 
 type Props = { reason?: string; onClose: () => void };
 type Mode = "signin" | "signup" | "reset";
@@ -129,7 +128,6 @@ export default function SignInSheet({ reason, onClose }: Props) {
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Logo size={36} />
             <div>
               <h2 className="font-display text-2xl font-semibold leading-tight">{title}</h2>
               <p className="mt-0.5 text-xs text-cream-500">

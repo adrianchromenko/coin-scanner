@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import AccountButton from "@/components/AccountButton";
 import { useAuth } from "@/components/AuthProvider";
-import Logo from "@/components/Logo";
+import Wordmark from "@/components/Wordmark";
 import { log } from "@/lib/log";
 import { authHeaders } from "@/lib/pipeline";
 import type { UsageReport } from "@/lib/server/auth";
@@ -162,12 +162,9 @@ export default function AdminPage() {
   return (
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-16 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-3">
-          <Logo size={40} />
-          <div>
-            <h1 className="font-display text-[26px] font-semibold leading-none tracking-tight">Usage</h1>
-            <p className="mt-1 text-xs text-cream-500">Scans, cost and who&apos;s scanning</p>
-          </div>
+        <Link href="/" className="flex flex-col gap-1.5">
+          <Wordmark size={18} tagline={null} />
+          <h1 className="font-display text-[24px] font-semibold leading-none tracking-tight">Usage</h1>
         </Link>
         <AccountButton />
       </header>

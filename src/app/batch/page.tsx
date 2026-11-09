@@ -7,7 +7,7 @@ import AccountButton from "@/components/AccountButton";
 import { useAuth } from "@/components/AuthProvider";
 import BatchCoin, { money, newSlot, type Slot } from "@/components/BatchCoin";
 import type { CapturedSide } from "@/components/CoinCapture";
-import Logo from "@/components/Logo";
+import Wordmark from "@/components/Wordmark";
 import type { CoinListing } from "@/lib/coinSchema";
 import { downloadText, ebayCsv } from "@/lib/csv";
 import { saveCoin } from "@/lib/firebase/coins";
@@ -262,12 +262,9 @@ function BatchTray() {
   return (
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-44 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-3">
-          <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
-          <div>
-            <h1 className="font-display text-[26px] font-semibold leading-none tracking-tight">Batch scan</h1>
-            <p className="mt-1 text-xs text-cream-500">Scan a tray of coins</p>
-          </div>
+        <Link href="/" className="flex flex-col gap-1.5">
+          <Wordmark size={18} tagline={null} />
+          <h1 className="font-display text-[24px] font-semibold leading-none tracking-tight">Batch scan</h1>
         </Link>
         <div className="flex items-center gap-2">
           {hasAnything && !running ? (
@@ -364,7 +361,7 @@ function BatchTray() {
             <div className="card flex flex-col gap-2 px-4 py-3" role="status" aria-live="polite" data-progress="1">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-cream-100">{progressText}</p>
-                <Logo size={22} className="animate-coin-spin" />
+                <span aria-hidden="true" className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-patina-400/25 border-t-patina-400" />
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                 <div

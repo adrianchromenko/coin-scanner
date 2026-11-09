@@ -10,7 +10,6 @@ import DebugPanel from "@/components/DebugPanel";
 import EbayButton from "@/components/EbayButton";
 import ListingForm from "@/components/ListingForm";
 import ListingPreview from "@/components/ListingPreview";
-import Logo from "@/components/Logo";
 import Wordmark from "@/components/Wordmark";
 import PendingScansBanner from "@/components/PendingScansBanner";
 import SaveCoinButton from "@/components/SaveCoinButton";
@@ -85,7 +84,11 @@ function LoadingOverlay({ phase, title = "Examining your coin" }: { phase: numbe
     >
       <div className="perspective reticle relative">
         <span className="absolute inset-0 animate-pulse-ring rounded-full bg-patina-400/30" />
-        <Logo size={96} className="animate-coin-spin drop-shadow-[0_0_30px_rgba(79,209,181,0.45)]" />
+        <span
+          aria-hidden="true"
+          className="block h-24 w-24 animate-spin rounded-full border-2 border-dashed border-patina-400/80 shadow-[0_0_30px_rgba(79,209,181,0.35)]"
+          style={{ animationDuration: "3s" }}
+        />
       </div>
       <div className="text-center">
         <p className="font-display text-2xl font-semibold text-cream-100">{title}</p>
@@ -399,7 +402,7 @@ export default function Home() {
 
       <header className="flex items-center justify-between gap-3">
         <h1 className="sr-only">CoinLens</h1>
-        <Wordmark size={44} />
+        <Wordmark size={30} />
         <div className="flex items-center gap-2">
           {front || back || listing ? (
             <button

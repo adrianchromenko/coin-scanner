@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import AccountButton from "@/components/AccountButton";
 import { useAuth } from "@/components/AuthProvider";
-import Logo from "@/components/Logo";
 import { EMPTY_TEMPLATE, TEMPLATE_FIELDS, useListingTemplate, type ListingTemplate } from "@/lib/firebase/settings";
 import { log } from "@/lib/log";
 import { SAMPLE_LISTING } from "@/lib/sampleListing";
@@ -58,9 +57,6 @@ export default function SettingsPage() {
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-24 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Link href="/coins" aria-label="Back to my coins">
-            <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
-          </Link>
           <div>
             <Link href="/coins" className="text-xs text-cream-500 hover:text-cream-100">
               ← My coins

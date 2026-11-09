@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import AccountButton from "@/components/AccountButton";
 import { useAuth } from "@/components/AuthProvider";
-import Logo from "@/components/Logo";
+import Wordmark from "@/components/Wordmark";
 import { downloadText, ebayCsv, toCsv } from "@/lib/csv";
 import { STATUS_LABEL, netProfit, subscribeCoins, type CoinStatus, type SavedCoin } from "@/lib/firebase/coins";
 import { useListingTemplate } from "@/lib/firebase/settings";
@@ -50,14 +50,14 @@ const FILTERS: { key: StatusFilter; label: string }[] = [
 function Header({ count }: { count: number | null }) {
   return (
     <header className="flex items-center justify-between gap-3">
-      <Link href="/" className="flex items-center gap-3">
-        <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
-        <div>
-          <h1 className="font-display text-[26px] font-semibold leading-none tracking-tight">My coins</h1>
-          <p className="mt-1 text-xs text-cream-500">
-            {count === null ? "Your collection" : `${count} ${count === 1 ? "coin" : "coins"} saved`}
-          </p>
-        </div>
+      <Link href="/" className="flex flex-col gap-1.5">
+        <Wordmark size={18} tagline={null} />
+        <h1 className="font-display text-[24px] font-semibold leading-none tracking-tight">
+          My coins
+          <span className="ml-2 align-middle text-xs font-medium text-cream-500">
+            {count === null ? "" : `${count} saved`}
+          </span>
+        </h1>
       </Link>
       <div className="flex items-center gap-2">
         <Link href="/" className="btn-ghost rounded-full px-3.5 py-1.5 text-xs font-medium">
@@ -237,7 +237,7 @@ export default function CoinsPage() {
   } else if (coins.length === 0) {
     body = (
       <section className="card flex flex-col items-center gap-3 p-8 text-center">
-        <Logo size={56} className="opacity-70" />
+        <Wordmark size={26} tagline={null} className="opacity-70" />
         <h2 className="font-display text-2xl font-semibold">No coins yet</h2>
         <p className="max-w-xs text-sm text-cream-300">
           Scan a coin and tap <span className="text-patina-300">Save to my coins</span> on the listing to

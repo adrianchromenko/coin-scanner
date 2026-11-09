@@ -1,6 +1,9 @@
 COINLENS LOGO PROMPT  (paste the whole thing into ChatGPT as one message)
 ==========================================================================
 
+NOTE: The current logo is the drawn wordmark alone (brand/assets/coinlens-lockup.png).
+This prompt adds a coin-and-lens symbol beside it; use it only if you want an icon again.
+
 Design one finished logo for "CoinLens", a mobile app that identifies, grades and prices coins
 from two phone photos and writes the eBay listing. I want a single horizontal lock-up: the mark
 on the left and the name on the right, nothing else on the canvas.
