@@ -32,3 +32,29 @@ services:
         sync: false
       - key: NEXT_PUBLIC_FIREBASE_APP_ID
         sync: false
+      # Scan access and limits. REQUIRE_SIGN_IN=1 needs the Firebase vars above.
+      - key: REQUIRE_SIGN_IN
+        value: "0"
+      - key: DAILY_SCAN_LIMIT
+        value: "25"
+      - key: PRICE_SEARCH
+        value: "1"
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+      # eBay one-tap listing (optional). Leave blank to hide the button.
+      - key: EBAY_CLIENT_ID
+        sync: false
+      - key: EBAY_CLIENT_SECRET
+        sync: false
+      - key: EBAY_RU_NAME
+        sync: false
+      - key: EBAY_TOKEN_SECRET
+        sync: false
+      - key: EBAY_ENV
+        value: sandbox
+      - key: EBAY_MARKETPLACE_ID
+        value: EBAY_US
+      - key: EBAY_POSTAL_CODE
+        sync: false

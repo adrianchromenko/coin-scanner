@@ -1,28 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import AccountButton from "@/components/AccountButton";
+import { useAuth } from "@/components/AuthProvider";
 import CoinCapture, { type CapturedSide } from "@/components/CoinCapture";
 import CropEditor from "@/components/CropEditor";
 import DebugPanel from "@/components/DebugPanel";
+import EbayButton from "@/components/EbayButton";
 import ListingForm from "@/components/ListingForm";
 import ListingPreview from "@/components/ListingPreview";
 import Logo from "@/components/Logo";
+import PendingScansBanner from "@/components/PendingScansBanner";
 import SaveCoinButton from "@/components/SaveCoinButton";
-import { canvasToJpeg, detectCoin, renderCrop, resizedJpeg, type CropCircle } from "@/lib/autoCrop";
+import { canvasToJpeg, loadToCanvas, type CropCircle } from "@/lib/autoCrop";
 import type { CoinListing } from "@/lib/coinSchema";
-import { ISSUE_LABEL, type CoinBox, type LocateResult, type PhotoIssue } from "@/lib/locateSchema";
 import { log } from "@/lib/log";
-import { sharpness } from "@/lib/photoCheck";
-import { SAMPLE_LISTING } from "@/lib/sampleListing";
+import type { Market } from "@/lib/market";
+import { queueScan, removeQueued, restoreSide, type QueuedScan } from "@/lib/offlineQueue";
+import {
+  ApiError,
+  SIDES,
+  cropSides,
+  identifyCrops,
+  locateSides,
+  renderSide,
+  type Crops,
+  type SideKey,
+} from "@/lib/pipeline";
 
 type Status = "idle" | "loading" | "review" | "done" | "error";
-type SideKey = "front" | "back";
-type SideCrop = { circle: CropCircle; full: string; small: string };
-type Crops = Record<SideKey, SideCrop>;
 /** Human-readable photo problems per side, found after the coin was located. */
 type Review = Record<SideKey, string[]>;
-const SIDES: SideKey[] = ["front", "back"];
+type ScanInput = { front: CapturedSide; back: CapturedSide; hints: string };
+
+/** Wrapper so the React Compiler purity rule does not flag timing inside event handlers. */
+const now = () => performance.now();
 
 const LOADING_TIPS = [
   "Finding the coin in each photo…",
@@ -30,29 +43,9 @@ const LOADING_TIPS = [
   "Reading the date and mint mark…",
   "Comparing against known varieties…",
   "Estimating grade and wear…",
-  "Checking for cleaning or damage…",
+  "Checking recent sold prices…",
   "Writing your eBay listing…",
 ];
-
-/** Convert the AI's fractional bounding box into a circle in source-canvas pixels. */
-function circleFromBox(box: CoinBox, src: HTMLCanvasElement): CropCircle {
-  const left = box.left * src.width;
-  const right = box.right * src.width;
-  const top = box.top * src.height;
-  const bottom = box.bottom * src.height;
-  return {
-    cx: (left + right) / 2,
-    cy: (top + bottom) / 2,
-    r: Math.max(right - left, bottom - top) / 2,
-    detected: true,
-  };
-}
-
-/** Render the final listing photo (1200px) and the smaller copy sent to the AI. */
-function renderSide(side: CapturedSide, circle: CropCircle): SideCrop {
-  const full = renderCrop(side.src, circle, { size: 1200, maskBackground: true });
-  return { circle, full: canvasToJpeg(full, 0.92), small: resizedJpeg(full, 896) };
-}
 
 function Steps({ front, back, done }: { front: boolean; back: boolean; done: boolean }) {
   const steps = [
@@ -76,7 +69,7 @@ function Steps({ front, back, done }: { front: boolean; back: boolean; done: boo
   );
 }
 
-function LoadingOverlay({ phase }: { phase: number }) {
+function LoadingOverlay({ phase, title = "Examining your coin" }: { phase: number; title?: string }) {
   // Tips advance on a timer but never lag behind the real phase of the pipeline.
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -94,7 +87,7 @@ function LoadingOverlay({ phase }: { phase: number }) {
         <Logo size={96} className="animate-coin-spin drop-shadow-[0_0_30px_rgba(236,193,79,0.45)]" />
       </div>
       <div className="text-center">
-        <p className="font-display text-2xl font-semibold text-cream-100">Examining your coin</p>
+        <p className="font-display text-2xl font-semibold text-cream-100">{title}</p>
         <p key={i} className="mt-2 animate-fade-up text-sm text-cream-500">
           {LOADING_TIPS[i]}
         </p>
@@ -105,16 +98,25 @@ function LoadingOverlay({ phase }: { phase: number }) {
 }
 
 export default function Home() {
+  const { enabled: authEnabled, user, openSignIn } = useAuth();
   const [front, setFront] = useState<CapturedSide | null>(null);
   const [back, setBack] = useState<CapturedSide | null>(null);
   const [hints, setHints] = useState("");
+  const [enhance, setEnhance] = useState(true);
   const [status, setStatus] = useState<Status>("idle");
   const [phase, setPhase] = useState(0);
   const [listing, setListing] = useState<CoinListing | null>(null);
+  const [market, setMarket] = useState<Market | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
   const [crops, setCrops] = useState<Crops | null>(null);
   const [editing, setEditing] = useState<SideKey | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [closeupBusy, setCloseupBusy] = useState(false);
+  const [offlineFail, setOfflineFail] = useState(false);
+  /** id of the queued offline scan currently being run; removed from the queue once the listing exists. */
+  const queuedRef = useRef<string | null>(null);
 
   const blocked = Boolean(front?.blocking || back?.blocking);
   const ready = Boolean(front && back) && !blocked && status !== "loading";
@@ -122,62 +124,36 @@ export default function Home() {
   const showReview = status === "review" && review && crops;
   const sides: Record<SideKey, CapturedSide | null> = { front, back };
   const setSide: Record<SideKey, (v: CapturedSide | null) => void> = { front: setFront, back: setBack };
-
-  async function postJson<T>(url: string, body: unknown): Promise<T & { requestId?: string }> {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    let data: (T & { error?: string; requestId?: string }) | null = null;
-    try {
-      data = await res.json();
-    } catch (e) {
-      log.error("api", `${url}: response ${res.status} was not JSON`, e);
-    }
-    if (!res.ok || !data) {
-      log.error("api", `${url} failed with HTTP ${res.status}`, { error: data?.error, requestId: data?.requestId });
-      throw new Error(data?.error ?? `Request failed (${res.status})`);
-    }
-    return data;
-  }
+  const demo = () => new URLSearchParams(window.location.search).has("demo");
 
   function fail(e: unknown) {
     if (!(e instanceof Error && e.message)) log.error("identify", "Unexpected failure", e);
     setError(e instanceof Error ? e.message : "Something went wrong");
+    setErrorCode(e instanceof ApiError ? (e.code ?? null) : null);
+    setOfflineFail((e instanceof ApiError && e.code === "offline") || !navigator.onLine);
     setStatus("error");
   }
 
+  function resetMessages() {
+    setError(null);
+    setErrorCode(null);
+    setOfflineFail(false);
+    setReview(null);
+  }
+
   /** Step 3: send the crops to the AI and show the listing. */
-  async function buildListing(next: Crops, demo: boolean, t0: number) {
+  async function buildListing(next: Crops, t0: number, h = hints) {
     setStatus("loading");
     setPhase(2);
-    if (demo) {
-      log.info("identify", "Demo mode: using sample listing instead of calling the API");
-      await new Promise((r) => setTimeout(r, 2000));
-      setListing(SAMPLE_LISTING);
-    } else {
-      log.info("identify", "Sending both crops to /api/identify", {
-        frontKB: Math.round(next.front.small.length / 1365),
-        backKB: Math.round(next.back.small.length / 1365),
-        hints: hints.trim().length ? `${hints.trim().length} chars` : "none",
-      });
-      const tId = performance.now();
-      const data = await postJson<{ listing: CoinListing; usage?: unknown }>("/api/identify", {
-        front: next.front.small,
-        back: next.back.small,
-        hints,
-      });
-      log.info("identify", `Listing received in ${Math.round(performance.now() - tId)} ms`, {
-        requestId: data.requestId,
-        usage: data.usage,
-        identified: data.listing.identified,
-        confidence: data.listing.confidence,
-        title: data.listing.title,
-      });
-      setListing(data.listing);
+    const result = await identifyCrops(next, h, { demo: demo(), enhance });
+    if (queuedRef.current) {
+      void removeQueued(queuedRef.current);
+      queuedRef.current = null;
     }
-    log.info("identify", `Whole flow done in ${Math.round(performance.now() - t0)} ms`);
+    setListing(result.listing);
+    setMarket(result.market ?? null);
+    setRemaining(result.remaining ?? null);
+    log.info("identify", `Whole flow done in ${Math.round(now() - t0)} ms`);
     setStatus("done");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -186,9 +162,8 @@ export default function Home() {
   async function continueAnyway() {
     if (!crops) return;
     log.warn("quality", "User kept photos with problems", review);
-    const demo = new URLSearchParams(window.location.search).has("demo");
     try {
-      await buildListing(crops, demo, performance.now());
+      await buildListing(crops, now());
     } catch (e) {
       fail(e);
     }
@@ -200,77 +175,100 @@ export default function Home() {
     setSide[side](null);
     setCrops(null);
     setListing(null);
-    setReview(null);
-    setError(null);
+    setMarket(null);
+    resetMessages();
     setStatus("idle");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function identify() {
-    if (!front || !back) return;
+  async function identify(input?: ScanInput) {
+    const f = input?.front ?? front;
+    const b = input?.back ?? back;
+    const h = input?.hints ?? hints;
+    if (!f || !b) return;
     setStatus("loading");
     setPhase(0);
-    setError(null);
-    setReview(null);
-    const t0 = performance.now();
-    const demo = new URLSearchParams(window.location.search).has("demo");
+    resetMessages();
+    const t0 = now();
+    const opts = { demo: demo(), enhance };
     try {
-      // 1. Ask the AI where the coin is in each photo.
-      let circles: Record<SideKey, CropCircle>;
-      const aiIssues: Record<SideKey, PhotoIssue[]> = { front: [], back: [] };
-      if (demo) {
-        log.info("locate", "Demo mode: using local detection instead of the API");
-        await new Promise((r) => setTimeout(r, 1500));
-        circles = { front: detectCoin(front.src), back: detectCoin(back.src) };
-      } else {
-        log.info("locate", "Asking the AI to locate the coin", {
-          frontKB: Math.round(front.locateUrl.length / 1365),
-          backKB: Math.round(back.locateUrl.length / 1365),
-        });
-        const loc = await postJson<LocateResult>("/api/locate", { front: front.locateUrl, back: back.locateUrl });
-        log.info("locate", `AI located the coin in ${Math.round(performance.now() - t0)} ms`, loc);
-        circles = {
-          front: loc.front.found ? circleFromBox(loc.front, front.src) : detectCoin(front.src),
-          back: loc.back.found ? circleFromBox(loc.back, back.src) : detectCoin(back.src),
-        };
-        if (!loc.front.found) log.warn("locate", "AI did not find the front coin; using local fallback", loc.front.notes);
-        if (!loc.back.found) log.warn("locate", "AI did not find the back coin; using local fallback", loc.back.notes);
-        aiIssues.front = loc.front.issues ?? [];
-        aiIssues.back = loc.back.issues ?? [];
-      }
+      // 1. Ask the AI where the coin is in each photo (and whether the photos are good enough).
+      const located = await locateSides({ front: f, back: b }, opts);
 
       // 2. Crop both sides at full resolution.
       setPhase(1);
-      const tCrop = performance.now();
-      const next: Crops = { front: renderSide(front, circles.front), back: renderSide(back, circles.back) };
+      const next = cropSides({ front: f, back: b }, located.circles, opts);
       setCrops(next);
-      log.info("crop", `Cropped both sides in ${Math.round(performance.now() - tCrop)} ms`, {
-        front: { cx: Math.round(circles.front.cx), cy: Math.round(circles.front.cy), r: Math.round(circles.front.r) },
-        back: { cx: Math.round(circles.back.cx), cy: Math.round(circles.back.cy), r: Math.round(circles.back.r) },
-      });
 
-      // 2b. Photo quality, now that we know exactly where the coin is. The AI's
-      // verdict decides (it reads the lettering); the local focus number over the
-      // coin is logged only, because smooth or worn coins score low without being blurry.
-      const problems: Review = { front: [], back: [] };
-      for (const side of SIDES) {
-        const captured = sides[side]!;
-        const focus = Math.round(sharpness(captured.src, circles[side]));
-        problems[side] = aiIssues[side].map((i) => ISSUE_LABEL[i]);
-        log.info("quality", `${side}: coin focus ${focus}, AI issues ${aiIssues[side].join(", ") || "none"}`);
-      }
-      if (problems.front.length || problems.back.length) {
-        log.warn("quality", "Photo problems found; asking the user before building the listing", problems);
-        setReview(problems);
+      // 2b. The AI's verdict on photo quality decides; the local focus number is only logged.
+      if (located.problems.front.length || located.problems.back.length) {
+        log.warn("quality", "Photo problems found; asking the user before building the listing", located.problems);
+        setReview(located.problems);
         setStatus("review");
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
 
       // 3. Identify from the crops.
-      await buildListing(next, demo, t0);
+      await buildListing(next, t0, h);
     } catch (e) {
       fail(e);
+    }
+  }
+
+  /** Run a scan that was saved while offline. */
+  async function runQueued(item: QueuedScan) {
+    setStatus("loading");
+    setPhase(0);
+    resetMessages();
+    try {
+      log.info("queue", `Running queued scan ${item.id}`);
+      const [f, b] = await Promise.all([restoreSide(item.front), restoreSide(item.back)]);
+      setFront(f);
+      setBack(b);
+      setHints(item.hints);
+      queuedRef.current = item.id;
+      await identify({ front: f, back: b, hints: item.hints });
+    } catch (e) {
+      queuedRef.current = null;
+      fail(e);
+    }
+  }
+
+  /** Keep the photos on the device and run the scan when the connection is back. */
+  async function saveForLater() {
+    if (!front || !back) return;
+    try {
+      await queueScan({ front, back }, hints);
+      startOver();
+    } catch (e) {
+      fail(e);
+    }
+  }
+
+  /** The AI asked for a close-up of the date / mint mark; re-run identification with it. */
+  async function addCloseup(file: File) {
+    if (!crops || !listing) return;
+    setCloseupBusy(true);
+    const t0 = now();
+    try {
+      log.info("closeup", "Close-up photo selected", { name: file.name, sizeKB: Math.round(file.size / 1024) });
+      const canvas = await loadToCanvas(file, 1400);
+      const closeup = canvasToJpeg(canvas, 0.88);
+      const result = await identifyCrops(crops, hints, { demo: demo(), enhance }, { closeup, previous: listing }, "closeup");
+      setListing(result.listing);
+      setMarket(result.market ?? null);
+      setRemaining(result.remaining ?? null);
+      log.info("closeup", `Re-identified with close-up in ${Math.round(now() - t0)} ms`, {
+        title: result.listing.title,
+        variety: result.listing.variety,
+        price: result.listing.suggested_price_usd,
+      });
+    } catch (e) {
+      log.error("closeup", "Close-up re-check failed", e);
+      setError(e instanceof Error ? e.message : "Could not use that close-up");
+    } finally {
+      setCloseupBusy(false);
     }
   }
 
@@ -282,20 +280,21 @@ export default function Home() {
       cy: Math.round(circle.cy),
       r: Math.round(circle.r),
     });
-    setCrops({ ...crops, [side]: renderSide(captured, circle) });
+    setCrops({ ...crops, [side]: renderSide(captured, circle, enhance) });
     setEditing(null);
   }
 
   function startOver() {
     log.info("app", "Start over");
+    queuedRef.current = null;
     setFront(null);
     setBack(null);
     setHints("");
     setListing(null);
+    setMarket(null);
     setCrops(null);
     setEditing(null);
-    setReview(null);
-    setError(null);
+    resetMessages();
     setStatus("idle");
     window.scrollTo({ top: 0 });
   }
@@ -356,11 +355,36 @@ export default function Home() {
     );
   }
 
+  function errorBox() {
+    if (!error) return null;
+    const needsAccount = authEnabled && !user && (errorCode === "sign_in_required" || errorCode === "limit_reached");
+    return (
+      <div className="animate-fade-up rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <p>{error}</p>
+        {needsAccount && (
+          <button
+            type="button"
+            onClick={() =>
+              openSignIn({
+                reason: errorCode === "sign_in_required" ? "Sign in to scan coins" : "Sign in for your own daily scans",
+                onDone: () => void identify(),
+              })
+            }
+            className="btn-gold mt-3 rounded-full px-4 py-2 text-xs font-semibold"
+          >
+            Sign in and scan
+          </button>
+        )}
+      </div>
+    );
+  }
+
   const editingSide = editing ? sides[editing] : null;
 
   return (
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-44 pt-[max(1.25rem,env(safe-area-inset-top))]">
       {status === "loading" && <LoadingOverlay phase={phase} />}
+      {closeupBusy && <LoadingOverlay phase={2} title="Checking the close-up" />}
       {editing && editingSide && crops && (
         <CropEditor
           title={`Fix ${editing} crop`}
@@ -384,7 +408,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {(front || back || listing) && (
+          {front || back || listing ? (
             <button
               type="button"
               onClick={startOver}
@@ -392,6 +416,10 @@ export default function Home() {
             >
               Start over
             </button>
+          ) : (
+            <Link href="/batch" className="btn-ghost rounded-full px-3.5 py-1.5 text-xs font-medium">
+              Scan a tray
+            </Link>
           )}
           <AccountButton />
           <DebugPanel />
@@ -403,9 +431,7 @@ export default function Home() {
       {showReview ? (
         <div className="flex animate-fade-up flex-col gap-5">
           {photoProblems()}
-          {error && (
-            <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</p>
-          )}
+          {errorBox()}
         </div>
       ) : showListing ? (
         <div className="flex animate-fade-up flex-col gap-5">
@@ -416,11 +442,27 @@ export default function Home() {
             back={crops.back.full}
             onFixCrop={(side) => setEditing(side)}
           />
-          <SaveCoinButton listing={listing} hints={hints} front={crops.front.full} back={crops.back.full} />
-          <ListingForm listing={listing} onChange={setListing} front={crops.front.full} back={crops.back.full} />
+          <SaveCoinButton listing={listing} hints={hints} front={crops.front.full} back={crops.back.full} market={market} />
+          <EbayButton listing={listing} front={crops.front.full} back={crops.back.full} />
+          {errorBox()}
+          <ListingForm
+            listing={listing}
+            onChange={setListing}
+            front={crops.front.full}
+            back={crops.back.full}
+            market={market}
+            onCloseup={addCloseup}
+            closeupBusy={closeupBusy}
+          />
+          {remaining !== null && (
+            <p className="px-1 text-center text-xs text-cream-500">
+              {remaining} scan{remaining === 1 ? "" : "s"} left today
+            </p>
+          )}
         </div>
       ) : (
         <>
+          <PendingScansBanner onRun={runQueued} busy={status === "loading"} />
           {!front && !back && (
             <div className="animate-fade-up">
               <h2 className="font-display text-[34px] font-medium leading-[1.05] tracking-tight text-cream-100">
@@ -429,8 +471,8 @@ export default function Home() {
                 <span className="italic gold-text">One ready-to-post listing.</span>
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-cream-300">
-                Add the front and back of any coin. CoinLens finds and crops the coin, identifies it,
-                grades it, and writes the title, description and item specifics for eBay.
+                Add the front and back of any coin. CoinLens finds and crops the coin, identifies it, grades it,
+                checks recent sold prices, and writes the title, description and item specifics for eBay.
               </p>
             </div>
           )}
@@ -452,7 +494,7 @@ export default function Home() {
             onChange={setBack}
           />
 
-          <section className="card p-5">
+          <section className="card flex flex-col gap-4 p-5">
             <label className="block">
               <span className="mb-2 flex items-baseline gap-2">
                 <span className="font-display text-lg font-semibold">Anything you know?</span>
@@ -466,12 +508,32 @@ export default function Home() {
                 className="input-dark"
               />
             </label>
+            <label className="flex cursor-pointer items-center justify-between gap-3 text-sm">
+              <span>
+                <span className="font-medium text-cream-100">Enhance listing photos</span>
+                <span className="block text-xs text-cream-500">Neutral white balance and even contrast on both crops</span>
+              </span>
+              <input
+                type="checkbox"
+                checked={enhance}
+                onChange={(e) => {
+                  setEnhance(e.target.checked);
+                  log.info("enhance", e.target.checked ? "Enhancement on" : "Enhancement off");
+                }}
+                className="h-5 w-5 accent-[#ecc14f]"
+              />
+            </label>
           </section>
 
-          {error && (
-            <p className="animate-fade-up rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-              {error}
-            </p>
+          {errorBox()}
+          {offlineFail && front && back && (
+            <button
+              type="button"
+              onClick={saveForLater}
+              className="btn-ghost w-full rounded-xl px-4 py-3 text-sm font-medium"
+            >
+              Save for later and run it when you&apos;re back online
+            </button>
           )}
 
           <div className="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-ink-900 via-ink-900/95 to-transparent px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-10">
@@ -479,7 +541,7 @@ export default function Home() {
               <button
                 type="button"
                 disabled={!ready}
-                onClick={identify}
+                onClick={() => void identify()}
                 className="btn-gold w-full rounded-2xl px-4 py-4 text-base font-semibold"
               >
                 Identify coin & build listing

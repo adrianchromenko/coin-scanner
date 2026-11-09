@@ -1,30 +1,25 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import type { CoinListing, ItemSpecific } from "@/lib/coinSchema";
+import { certLookupUrl, type CoinListing, type ItemSpecific } from "@/lib/coinSchema";
+import type { Market } from "@/lib/market";
+import { downloadText, ebayCsv, slugify } from "@/lib/csv";
+import { useListingTemplate } from "@/lib/firebase/settings";
 import { log } from "@/lib/log";
+import { applyTemplate } from "@/lib/template";
 
 type Props = {
   listing: CoinListing;
   onChange: (next: CoinListing) => void;
   front: string;
   back: string;
+  /** Spot price and melt value for the identified coin, when it contains precious metal. */
+  market?: Market | null;
+  /** When set, the "add a close-up" button is shown for coins the AI flagged. */
+  onCloseup?: (file: File) => void;
+  closeupBusy?: boolean;
 };
-
-function slugify(s: string) {
-  return (
-    s
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 60) || "coin"
-  );
-}
-
-function csvCell(v: string | number) {
-  const s = String(v);
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-}
 
 function downloadDataUrl(dataUrl: string, filename: string) {
   const a = document.createElement("a");
@@ -33,13 +28,6 @@ function downloadDataUrl(dataUrl: string, filename: string) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-}
-
-function downloadText(text: string, filename: string, mime = "text/plain") {
-  const blob = new Blob([text], { type: `${mime};charset=utf-8` });
-  const url = URL.createObjectURL(blob);
-  downloadDataUrl(url, filename);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function money(n: number) {
@@ -100,8 +88,13 @@ const ICON = {
   edit: "M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3zM13.5 6.5l3 3",
 };
 
-export default function ListingForm({ listing, onChange, front, back }: Props) {
+export default function ListingForm({ listing, onChange, front, back, market, onCloseup, closeupBusy }: Props) {
   const [copied, setCopied] = useState<string | null>(null);
+  // Seller boilerplate (shipping, returns, footer) from Settings is applied to exports only,
+  // so the stored listing stays clean and the template can change later.
+  const { template, source: templateSource } = useListingTemplate();
+  const out = applyTemplate(listing, template);
+  const templated = out.description !== listing.description;
 
   const set = <K extends keyof CoinListing>(key: K, v: CoinListing[K]) =>
     onChange({ ...listing, [key]: v });
@@ -125,7 +118,7 @@ export default function ListingForm({ listing, onChange, front, back }: Props) {
   const allText = [
     listing.title,
     "",
-    listing.description,
+    out.description,
     "",
     "Item specifics",
     specificsText,
@@ -135,22 +128,9 @@ export default function ListingForm({ listing, onChange, front, back }: Props) {
 
   function exportCsv() {
     // eBay File Exchange style: item specifics go in C:<Name> columns.
-    const base: [string, string | number][] = [
-      ["*Action(SiteID=US|Country=US|Currency=USD|Version=1193)", "Add"],
-      ["*Category", ""],
-      ["*Title", listing.title],
-      ["Description", listing.description],
-      ["*StartPrice", listing.suggested_price_usd],
-      ["*Format", "FixedPrice"],
-      ["*Duration", "GTC"],
-      ["*Quantity", 1],
-    ];
-    const specifics: [string, string][] = listing.item_specifics.map((s) => [`C:${s.name}`, s.value]);
-    const rows = [...base, ...specifics];
-    const csv =
-      rows.map(([k]) => csvCell(k)).join(",") + "\n" + rows.map(([, v]) => csvCell(v)).join(",") + "\n";
+    const csv = ebayCsv([{ listing: out }]);
     downloadText(csv, `${slugify(listing.title)}.csv`, "text/csv");
-    log.info("export", "eBay CSV downloaded", { columns: rows.length });
+    log.info("export", "eBay CSV downloaded", { templated });
   }
 
   function updateSpecific(i: number, patch: Partial<ItemSpecific>) {
@@ -224,6 +204,78 @@ export default function ListingForm({ listing, onChange, front, back }: Props) {
             </p>
           )}
 
+          {(listing.grading_service || listing.cert_number) && (
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-sm text-sky-100">
+              <span className="font-semibold">Slabbed</span>
+              <span>{[listing.grading_service, listing.slab_grade].filter(Boolean).join(" ")}</span>
+              {listing.cert_number && <span className="font-mono text-xs text-sky-200/80">cert {listing.cert_number}</span>}
+              {certLookupUrl(listing.grading_service, listing.cert_number) && (
+                <a
+                  href={certLookupUrl(listing.grading_service, listing.cert_number)!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="ml-auto font-medium underline underline-offset-4"
+                  onClick={() => log.info("slab", "Opened certificate lookup", { service: listing.grading_service, cert: listing.cert_number })}
+                >
+                  Verify certificate ↗
+                </a>
+              )}
+            </div>
+          )}
+
+          {listing.needs_closeup && onCloseup && (
+            <div className="mt-4 rounded-xl border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-100">
+              <p className="font-semibold">A close-up could change the value</p>
+              <p className="mt-1 text-amber-100/90">{listing.closeup_reason}</p>
+              <label className={`btn-gold mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold ${closeupBusy ? "pointer-events-none opacity-60" : ""}`}>
+                <Icon d={ICON.photo} />
+                {closeupBusy ? "Re-checking…" : "Add a close-up of the date & mint mark"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="sr-only"
+                  disabled={closeupBusy}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onCloseup(f);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+          )}
+
+          {(listing.price_basis || listing.price_sources.length > 0 || market?.melt_value_usd) && (
+            <div className="mt-4 rounded-xl bg-black/25 p-3 text-sm">
+              <p className="eyebrow mb-1">Where the price comes from</p>
+              {listing.price_basis && <p className="leading-relaxed text-cream-300">{listing.price_basis}</p>}
+              {market?.melt_value_usd != null && market.spot && (
+                <p className={`mt-2 ${listing.suggested_price_usd < market.melt_value_usd ? "text-red-300" : "text-cream-300"}`}>
+                  <span className="font-semibold text-cream-100">Melt value </span>
+                  {money(market.melt_value_usd)}{" "}
+                  <span className="text-cream-500">
+                    ({market.spot.metal} at {money(market.spot.usd_per_oz)}/oz · {new Date(market.spot.as_of).toLocaleDateString()})
+                  </span>
+                  {listing.suggested_price_usd < market.melt_value_usd && " — your price is below melt"}
+                </p>
+              )}
+              {listing.price_sources.length > 0 && (
+                <ul className="mt-2 flex flex-col gap-1">
+                  {listing.price_sources.slice(0, 6).map((s, i) => (
+                    <li key={i} className="flex items-baseline gap-2 text-xs">
+                      <a href={s.url} target="_blank" rel="noreferrer" className="min-w-0 flex-1 truncate text-gold-300 underline-offset-4 hover:underline">
+                        {s.title || s.url}
+                      </a>
+                      {s.price_usd != null && <span className="shrink-0 text-cream-300">{money(s.price_usd)}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+
           <details className="group mt-4 text-sm">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-cream-300 hover:text-cream-100">
               <Icon d={ICON.sparkle} className="h-4 w-4 text-gold-400" />
@@ -251,11 +303,18 @@ export default function ListingForm({ listing, onChange, front, back }: Props) {
           <Icon d={ICON.copy} className="h-5 w-5" />
           Copy everything for eBay
         </button>
+        <p className="px-1 text-center text-xs text-cream-500">
+          {templated ? (
+            <>Your shipping / returns / footer lines from <Link href="/settings" className="text-gold-300 underline-offset-4 hover:underline">Settings</Link> are added to the description{templateSource === "device" ? " (saved on this device)" : ""}.</>
+          ) : (
+            <>Add shipping and returns boilerplate once in <Link href="/settings" className="text-gold-300 underline-offset-4 hover:underline">Settings</Link>.</>
+          )}
+        </p>
         <div className="grid grid-cols-2 gap-2">
           <button type="button" onClick={() => copy("Title", listing.title)} className={ghostBtn}>
             <Icon d={ICON.copy} /> Title
           </button>
-          <button type="button" onClick={() => copy("Description", listing.description)} className={ghostBtn}>
+          <button type="button" onClick={() => copy("Description", out.description)} className={ghostBtn}>
             <Icon d={ICON.copy} /> Description
           </button>
           <button type="button" onClick={() => copy("Item specifics", specificsText)} className={ghostBtn}>

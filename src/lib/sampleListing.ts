@@ -39,6 +39,19 @@ export const SAMPLE_LISTING: CoinListing = {
   ],
   estimated_value_usd: { low: 32, high: 45 },
   suggested_price_usd: 39,
+  metal: "silver",
+  precious_metal_oz: 0.7734,
+  grading_service: "",
+  cert_number: "",
+  slab_grade: "",
+  price_basis:
+    "Recent eBay sold listings for common-date 1921 Morgans in VF show $32–$45; silver melt is about $26, so the floor is firm.",
+  price_sources: [
+    { title: "eBay sold: 1921 Morgan Dollar VF", url: "https://www.ebay.com/sch/i.html?_nkw=1921+morgan+dollar&LH_Sold=1", price_usd: 38 },
+    { title: "PCGS price guide: 1921 $1 VF-20", url: "https://www.pcgs.com/prices/detail/morgan-dollar/744", price_usd: 42 },
+  ],
+  needs_closeup: false,
+  closeup_reason: "",
   identification_notes:
     "Obverse shows the Morgan Liberty head with date 1921; reverse shows the S mint mark below the wreath bow. The 1921 issue uses the modified shallow-relief hubs, visible in the flatter hair detail.",
 };

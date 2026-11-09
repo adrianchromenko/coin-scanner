@@ -25,6 +25,12 @@ type Props = {
   hint: string;
   value: CapturedSide | null;
   onChange: (value: CapturedSide | null) => void;
+  /**
+   * Small square version for batch mode: one tap target (camera or gallery via
+   * the OS picker), a thumbnail once a photo is in, no tips. Default rendering
+   * is unchanged when this is omitted.
+   */
+  compact?: boolean;
 };
 
 const TIPS = [
@@ -71,7 +77,7 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-export default function CoinCapture({ step, label, sublabel, hint, value, onChange }: Props) {
+export default function CoinCapture({ step, label, sublabel, hint, value, onChange, compact }: Props) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -138,6 +144,79 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
   const warnings = value?.check?.checks.filter((c) => !c.ok) ?? [];
   const blocked = Boolean(value?.blocking);
   const done = Boolean(value) && !blocked;
+
+  if (compact) {
+    return (
+      <div className="flex min-w-0 flex-col gap-1.5" data-capture={label.toLowerCase()}>
+        {!value ? (
+          <label
+            aria-disabled={busy}
+            className={`group flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-gold-400/35 bg-gold-400/[0.04] px-2 transition-colors active:bg-gold-400/10 ${
+              busy ? "pointer-events-none opacity-50" : ""
+            }`}
+          >
+            {/* No `capture` attribute: the OS picker offers camera or gallery from this one tap. */}
+            <input
+              ref={galleryRef}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              disabled={busy}
+              onClick={() => log.info(`capture:${label}`, "Compact picker opened")}
+              onChange={(e) => handleFile(e.target.files?.[0])}
+            />
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-400/15 text-gold-300 ring-1 ring-gold-400/30 transition-transform group-active:scale-95">
+              <CameraIcon className="h-5 w-5" />
+            </span>
+            <span className="text-xs font-semibold text-cream-100">{busy ? "Processing…" : label}</span>
+            {sublabel && <span className="text-[10px] text-cream-500">{sublabel}</span>}
+          </label>
+        ) : (
+          <div className="relative aspect-square w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={value.srcUrl}
+              alt={`${label} photo`}
+              className={`h-full w-full rounded-2xl object-cover ring-2 ${blocked ? "ring-red-400/70" : "ring-gold-400/50"}`}
+            />
+            <span
+              className={`absolute bottom-1.5 left-1.5 flex h-6 w-6 items-center justify-center rounded-full ring-2 ring-ink-900 ${
+                blocked ? "bg-red-500 text-white" : "bg-gold-400 text-ink-950"
+              }`}
+              aria-label={blocked ? `${label}: blurry` : `${label}: photo added`}
+            >
+              {blocked ? <span className="text-xs font-bold">!</span> : <CheckIcon className="h-3 w-3" />}
+            </span>
+            <span className="absolute bottom-1.5 right-1.5 rounded-full bg-ink-950/70 px-1.5 py-0.5 text-[10px] font-medium text-cream-100">
+              {label}
+            </span>
+            <button
+              type="button"
+              onClick={reset}
+              aria-label={`Retake ${label.toLowerCase()} photo`}
+              className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-ink-950/75 text-sm leading-none text-cream-100 ring-1 ring-white/15 hover:bg-ink-950"
+            >
+              ×
+            </button>
+          </div>
+        )}
+        {error && <p className="text-[11px] leading-snug text-red-300">{error}</p>}
+        {value && blocked && (
+          <div className="flex items-center justify-between gap-1 text-[11px]">
+            <span className="font-medium text-red-300">Blurry</span>
+            <button type="button" onClick={useAnyway} className="text-cream-500 underline-offset-2 hover:text-cream-100 hover:underline">
+              Use anyway
+            </button>
+          </div>
+        )}
+        {value && !blocked && warnings.length > 0 && (
+          <p className="truncate text-[11px] text-amber-200/90" title={warnings.map((c) => c.label).join(" · ")}>
+            {warnings.map((c) => c.label).join(" · ")}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <section className="card p-5">

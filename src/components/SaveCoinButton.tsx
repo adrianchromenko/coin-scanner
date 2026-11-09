@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { CoinListing } from "@/lib/coinSchema";
+import type { Market } from "@/lib/market";
 import { saveCoin, updateCoin } from "@/lib/firebase/coins";
 import { log } from "@/lib/log";
 import { useAuth } from "./AuthProvider";
 
-type Props = { listing: CoinListing; hints: string; front: string; back: string };
+type Props = { listing: CoinListing; hints: string; front: string; back: string; market?: Market | null };
 type State =
   | { kind: "idle" }
   | { kind: "saving" }
@@ -19,14 +20,14 @@ type State =
  * then stores the listing and both photos. Editing the listing after saving
  * turns the button into "Save changes".
  */
-export default function SaveCoinButton({ listing, hints, front, back }: Props) {
+export default function SaveCoinButton({ listing, hints, front, back, market = null }: Props) {
   const { enabled, user, openSignIn } = useAuth();
   const [state, setState] = useState<State>({ kind: "idle" });
   // Always save the latest listing, even when the click came through the sign-in sheet.
-  const latest = useRef({ listing, hints, front, back });
+  const latest = useRef({ listing, hints, front, back, market });
   useEffect(() => {
-    latest.current = { listing, hints, front, back };
-  }, [listing, hints, front, back]);
+    latest.current = { listing, hints, front, back, market };
+  }, [listing, hints, front, back, market]);
 
   if (!enabled) return null;
 

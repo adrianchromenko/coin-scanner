@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import AuthProvider from "@/components/AuthProvider";
+import InstallPrompt from "@/components/InstallPrompt";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import { SITE_URL } from "@/lib/siteUrl";
 import "./globals.css";
 
@@ -75,14 +77,25 @@ const BOOT_SCRIPT = `
   }
   send("info","HTML loaded",{url:location.href,ua:navigator.userAgent,screen:screen.width+"x"+screen.height});
   // A service worker or cache left behind by another app on this host:port can serve stale
-  // scripts and stop the app from starting. Clear them once and reload.
+  // scripts and stop the app from starting. Clear foreign ones once and reload; leave our own
+  // worker (/sw.js at the root scope) and its "coinlens-*" caches alone.
   try {
     if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
       navigator.serviceWorker.getRegistrations().then(function(regs){
-        if (!regs.length) return;
-        send("warn","Found "+regs.length+" stale service worker(s); unregistering",{scopes:regs.map(function(r){return r.scope;})});
-        Promise.all(regs.map(function(r){return r.unregister();})).then(function(){
-          var p = window.caches ? caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k);}));}) : Promise.resolve();
+        function ours(r){
+          var w = r.active || r.waiting || r.installing;
+          var url = (w && w.scriptURL) || "";
+          return r.scope.slice(-1) === "/" && url.slice(-6) === "/sw.js";
+        }
+        var stale = regs.filter(function(r){ return !ours(r); });
+        if (!stale.length) return;
+        send("warn","Found "+stale.length+" stale service worker(s); unregistering",{scopes:stale.map(function(r){return r.scope;})});
+        Promise.all(stale.map(function(r){return r.unregister();})).then(function(){
+          var p = window.caches
+            ? caches.keys().then(function(ks){
+                return Promise.all(ks.filter(function(k){return k.indexOf("coinlens-")!==0;}).map(function(k){return caches.delete(k);}));
+              })
+            : Promise.resolve();
           p.then(function(){
             if (!sessionStorage.getItem("cl-sw-reload")) { sessionStorage.setItem("cl-sw-reload","1"); location.reload(); }
           });
@@ -108,6 +121,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col">
+        <ServiceWorkerRegistration />
+        <InstallPrompt />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

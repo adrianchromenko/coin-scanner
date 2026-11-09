@@ -1,12 +1,42 @@
 rules_version = '2';
 
-// Each signed-in user can read and write only their own collection:
-//   users/{uid}/coins/{coinId}             listing + thumbnail
-//   users/{uid}/coins/{coinId}/images/full the two full photos
+// Data layout
+//   users/{uid}/coins/{coinId}              listing + thumbnail (+ `public` flag)
+//   users/{uid}/coins/{coinId}/images/full  the two full photos
+//
+// Access
+//   * The signed-in owner can read and write everything under users/{uid}.
+//   * Anyone, signed in or not, can fetch a single coin document that the owner
+//     has flagged `public: true`, and that coin's photos. This powers the
+//     share page at /s/{uid}/{coinId}. Public access is read-only and uses
+//     `get` (single document) rather than `list`, so nobody can enumerate a
+//     user's coins; a share link has to be handed out by the owner.
+//   * Nothing else is readable or writable.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // The parent coin document says whether its photos may be shown.
+    function coinIsPublic(uid, coinId) {
+      return get(/databases/$(database)/documents/users/$(uid)/coins/$(coinId)).data.public == true;
+    }
+
+    match /users/{uid} {
+      // Owner: full access to the whole subtree.
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Public share: one coin at a time, read-only, only when flagged public.
+      match /coins/{coinId} {
+        allow get: if resource.data.public == true;
+
+        match /images/{doc} {
+          allow get: if coinIsPublic(uid, coinId);
+        }
+      }
     }
   }
 }
