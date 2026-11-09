@@ -1,0 +1,41 @@
+COINLENS LOGO PROMPT  (paste the whole thing into ChatGPT as one message)
+==========================================================================
+
+Design one finished logo for "CoinLens", a mobile app that identifies, grades and prices coins
+from two phone photos and writes the eBay listing. I want a single horizontal lock-up: the mark
+on the left and the name on the right, nothing else on the canvas.
+
+THE MARK (left):
+A coin that is also a lens, drawn like an eclipse. A perfect circle of deep verdigris glass
+(#145a4e at the core fading to #0b2b26 at the edge, with a thin #4fd1b5 rim) sits almost exactly
+over an antique-brass coin, offset very slightly up and to the left, so a sharp, bright crescent
+of the coin's reeded edge (#f3e1b0 to #d4a84b, with fine dark dashes for the milling) shows along
+the lower-right rim. On the lens: one small crisp cream glint top-left and a tiny #bff0e4 dot at
+the exact centre. The silhouette must still read as a coin. Flat vector, at most two subtle
+gradients, no 3D, no gloss, no bevel, no drop shadow, no handle, no dollar sign, no hands.
+
+THE NAME (right):
+"CoinLens" as ONE word in a bold, slightly condensed geometric grotesque with tight letter-spacing
+(match Bricolage Grotesque ExtraBold as closely as you can). "Coin" in warm cream #f3ede1,
+"Lens" in verdigris #4fd1b5. Directly beneath it, small and plain, the tagline
+"Know what you're holding." in muted cream #9a917f, sentence case, with the period.
+The mark is about 1.6 times the cap height of the word, vertically centred on the word, with a gap
+of about one third of the mark's width between them.
+
+CANVAS:
+Background #0c0a08, a warm near-black (never blue-black). Wide format, roughly 3:1, generous
+margin, everything centred. Premium and instrument-like, like a mark machined by Leica or Braun.
+
+RULES:
+Brass is always the coin, green is always the lens. Never a green coin, never a gold lens.
+Use only these colours: #0c0a08, #f3ede1, #9a917f, #bff0e4, #4fd1b5, #2fb59a, #145a4e,
+#f3e1b0, #d4a84b, #b9892e, #8f6619. Exact spelling "CoinLens", capital C and L, no space.
+
+Give me one image, at the highest resolution you can.
+
+
+--------------------------------------------------------------------------
+If the result is close but not right, reply with one change at a time, e.g.
+  "make the brass crescent thicker"      "tagline smaller"
+  "lens 10% larger"                      "tighter letter-spacing on the name"
+Then ask: "same logo, no changes, as SVG" or "as a 4096 px PNG".

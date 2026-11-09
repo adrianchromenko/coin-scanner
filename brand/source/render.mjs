@@ -1,0 +1,24 @@
+import puppeteer from "puppeteer-core";
+import path from "node:path";
+import fs from "node:fs";
+const HERE = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
+const html = path.join(HERE, "guide.html");
+const out = process.argv[2] ?? path.join(HERE, "..", "CoinLens-Brand-Guide.pdf");
+const browser = await puppeteer.launch({ executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: true, args: ["--no-sandbox", "--disable-gpu", "--allow-file-access-from-files"] });
+const page = await browser.newPage();
+const errs = [];
+page.on("pageerror", (e) => errs.push(e.message));
+page.on("requestfailed", (r) => errs.push("failed: " + r.url()));
+await page.goto("file:///" + html.split("\\").join("/"), { waitUntil: "networkidle0", timeout: 90000 });
+await page.evaluateHandle("document.fonts.ready");
+const fonts = await page.evaluate(() => [...document.fonts].filter(f => f.status === "loaded").map(f => f.family).filter((v,i,a)=>a.indexOf(v)===i));
+await new Promise((r) => setTimeout(r, 800));
+// Preview PNGs of a few pages for a visual check.
+await page.setViewport({ width: 1123, height: 794, deviceScaleFactor: 1 });
+const pages = await page.$$("section.page");
+// Previews: for (let i = 0; i < pages.length; i++) await pages[i].screenshot({ path: path.join(HERE, `preview_${i + 1}.png`) });
+await page.pdf({ path: out, width: "297mm", height: "210mm", printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
+await browser.close();
+console.log("fonts:", fonts.join(", "));
+console.log("pages:", pages.length, "errors:", errs.length ? errs.join("\n") : "none");
+console.log("wrote", out, fs.statSync(out).size, "bytes");

@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CoinLens Brand Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink-950: #070605; --ink-900: #0c0a08; --ink-800: #15120e; --ink-700: #201b15; --ink-600: #2e2820;
+    --cream-100: #f3ede1; --cream-300: #d3cab8; --cream-500: #9a917f;
+    --patina-200: #bff0e4; --patina-300: #8fe3cf; --patina-400: #4fd1b5; --patina-500: #2fb59a; --patina-600: #1f8a76; --patina-700: #145a4e;
+    --gold-200: #f3e1b0; --gold-300: #e8c874; --gold-400: #d4a84b; --gold-500: #b9892e; --gold-600: #8f6619; --gold-700: #5e400a;
+    --display: "Bricolage Grotesque", "Geist", system-ui, sans-serif;
+    --sans: "Geist", system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+    --serif: "Fraunces", Georgia, serif;
+  }
+  @page { size: 297mm 210mm; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #222; }
+  body { font-family: var(--sans); color: var(--cream-100); font-size: 10.5pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .page {
+    position: relative; width: 297mm; height: 210mm; overflow: hidden;
+    padding: 16mm 18mm 14mm; background: var(--ink-900); color: var(--cream-100);
+    page-break-after: always; break-after: page; isolation: isolate;
+  }
+  .page:last-child { page-break-after: auto; }
+  .page.dark {
+    background-color: var(--ink-900);
+    background-image:
+      radial-gradient(60% 40% at 15% -10%, rgb(79 209 181 / 0.16) 0%, rgb(79 209 181 / 0) 70%),
+      radial-gradient(50% 35% at 110% 100%, rgb(212 168 75 / 0.10) 0%, transparent 65%);
+  }
+  .page.light { background: var(--cream-100); color: var(--ink-900); }
+  .grain::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; opacity: .16; pointer-events: none;
+    background-image: url("img/grain.png"); background-repeat: repeat; background-size: 256px 256px;
+  }
+
+  .footer {
+    position: absolute; left: 18mm; right: 18mm; bottom: 8mm; display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 7.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--cream-500);
+  }
+  .light .footer { color: #7a7260; }
+
+  .eyebrow { font-family: var(--mono); font-size: 8pt; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--cream-500); }
+  .light .eyebrow { color: #7a7260; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; letter-spacing: -0.035em; line-height: 1; margin: 0; }
+  h1 { font-size: 54pt; }
+  h2 { font-size: 30pt; margin: 4mm 0 6mm; }
+  h3 { font-size: 13pt; letter-spacing: -0.02em; margin: 0 0 2mm; }
+  p { margin: 0 0 3mm; }
+  .lede { font-size: 12.5pt; color: var(--cream-300); max-width: 150mm; }
+  .light .lede { color: #4a4336; }
+  .muted { color: var(--cream-500); }
+  .light .muted { color: #7a7260; }
+  .patina { background: linear-gradient(120deg, #bff0e4 0%, #4fd1b5 45%, #2fb59a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .brass { background: linear-gradient(120deg, #f3e1b0 0%, #d4a84b 45%, #b9892e 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .light .patina { background: linear-gradient(120deg, #1f8a76, #145a4e); -webkit-background-clip: text; background-clip: text; }
+  .light .brass { background: linear-gradient(120deg, #b9892e, #8f6619); -webkit-background-clip: text; background-clip: text; }
+  .mono { font-family: var(--mono); }
+  .small { font-size: 9pt; }
+  .xs { font-size: 8pt; }
+
+  .cols { display: grid; gap: 8mm; }
+  .c2 { grid-template-columns: 1fr 1fr; }
+  .c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .c4 { grid-template-columns: repeat(4, 1fr); }
+  .c5 { grid-template-columns: repeat(5, 1fr); }
+  .c6 { grid-template-columns: repeat(6, 1fr); }
+
+  .card { border: 1px solid rgb(255 255 255 / .08); background: rgb(255 255 255 / .03); border-radius: 4mm; padding: 5mm; }
+  .light .card { border-color: rgb(12 10 8 / .12); background: rgb(255 255 255 / .55); }
+  .hairline { height: 1px; background: linear-gradient(90deg, transparent, rgb(79 209 181 / .45), transparent); margin: 5mm 0; }
+
+  .swatch { border-radius: 3mm; padding: 3mm; min-height: 24mm; display: flex; flex-direction: column; justify-content: flex-end; font-family: var(--mono); font-size: 7.5pt; letter-spacing: .04em; }
+  .swatch b { font-family: var(--sans); font-weight: 600; letter-spacing: 0; font-size: 8.5pt; display: block; margin-bottom: .5mm; }
+  .scale { display: grid; gap: 1.5mm; }
+  .scale .swatch { min-height: 15mm; }
+
+  .do, .dont { border-radius: 3mm; padding: 3mm 4mm; font-size: 9pt; }
+  .do { border: 1px solid rgb(79 209 181 / .35); background: rgb(79 209 181 / .07); }
+  .dont { border: 1px solid rgb(232 120 90 / .4); background: rgb(232 120 90 / .07); }
+  .do .tag, .dont .tag { font-family: var(--mono); font-size: 7.5pt; letter-spacing: .16em; text-transform: uppercase; display: block; margin-bottom: 1.5mm; }
+  .do .tag { color: var(--patina-300); } .dont .tag { color: #e8785a; }
+  .light .do { background: rgb(31 138 118 / .08); } .light .dont { background: rgb(200 90 60 / .08); }
+  .light .do .tag { color: #1f8a76; } .light .dont .tag { color: #b85a3a; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 9pt; }
+  th, td { text-align: left; padding: var(--pad, 2mm) 3mm; border-bottom: 1px solid rgb(255 255 255 / .08); vertical-align: top; }
+  .light th, .light td { border-color: rgb(12 10 8 / .12); }
+  th { font-family: var(--mono); font-weight: 500; font-size: 7.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--cream-500); }
+
+  .btn { display: inline-block; border-radius: 999px; padding: 3mm 6mm; font-weight: 600; font-size: 10pt; }
+  .btn-primary { background: linear-gradient(135deg, #bff0e4 0%, #4fd1b5 40%, #2fb59a 75%, #1f8a76 100%); color: #04211b; box-shadow: 0 10px 24px -10px rgb(79 209 181 / .6); }
+  .btn-brass { background: linear-gradient(135deg, #f3e1b0 0%, #d4a84b 40%, #b9892e 75%, #8f6619 100%); color: #1d1303; box-shadow: 0 10px 24px -10px rgb(212 168 75 / .6); }
+  .btn-ghost { border: 1px solid rgb(255 255 255 / .14); background: rgb(255 255 255 / .04); color: var(--cream-100); }
+
+  .wordmark { font-family: var(--display); font-weight: 800; letter-spacing: -0.045em; line-height: 1; }
+  .prompt { font-family: var(--mono); font-size: 8.4pt; line-height: 1.5; white-space: pre-wrap; background: rgb(0 0 0 / .4); border: 1px solid rgb(79 209 181 / .3); border-radius: 3mm; padding: 4mm 5mm; color: var(--cream-100); }
+  .num { font-family: var(--display); font-weight: 800; font-size: 22pt; letter-spacing: -0.04em; color: var(--patina-400); line-height: 1; }
+  .shot { border-radius: 4mm; border: 1px solid rgb(255 255 255 / .1); box-shadow: 0 20px 50px -30px rgb(0 0 0 / .9); display: block; }
+  .pill { display: inline-block; font-family: var(--mono); font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; padding: 1mm 2.5mm; border-radius: 999px; border: 1px solid currentColor; }
+
+  .toc li { display: flex; justify-content: space-between; padding: 2.2mm 0; border-bottom: 1px solid rgb(255 255 255 / .08); font-size: 11pt; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc .n { font-family: var(--mono); color: var(--cream-500); font-size: 9pt; }
+</style>
+</head>
+<body>
+
+<!-- Shared gradient defs for the mark -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="brass" x1="10" y1="6" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f3e1b0"/><stop offset=".5" stop-color="#d4a84b"/><stop offset="1" stop-color="#8f6619"/>
+    </linearGradient>
+    <radialGradient id="lens" cx="26" cy="26" r="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2fb59a"/><stop offset=".55" stop-color="#145a4e"/><stop offset="1" stop-color="#0b2b26"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="22" cy="16" r="26" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="lensBlue" cx="26" cy="26" r="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3b82f6"/><stop offset=".55" stop-color="#1e3a8a"/><stop offset="1" stop-color="#0b1a3a"/>
+    </radialGradient>
+    <radialGradient id="lensGold" cx="26" cy="26" r="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e8c874"/><stop offset=".55" stop-color="#8f6619"/><stop offset="1" stop-color="#3a2805"/>
+    </radialGradient>
+    <symbol id="mark" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="url(#brass)"/>
+      <circle cx="32" cy="32" r="30" fill="url(#shine)"/>
+      <circle cx="32" cy="32" r="28" fill="none" stroke="#3a2805" stroke-opacity=".55" stroke-width="2.6" stroke-dasharray="1.3 2.1"/>
+      <circle cx="32" cy="32" r="23" fill="#0c0a08"/>
+      <circle cx="32" cy="32" r="15.5" fill="url(#lens)"/>
+      <circle cx="32" cy="32" r="15.5" fill="none" stroke="#4fd1b5" stroke-width="1.8"/>
+      <path d="M22.5 27.5a10.5 10.5 0 0 1 7.2-6.3" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2" stroke-linecap="round"/>
+      <g stroke="#f3ede1" stroke-width="1.6" stroke-linecap="round" stroke-opacity=".9" fill="none">
+        <path d="M32 10.5v4.5"/><path d="M32 49v4.5"/><path d="M10.5 32h4.5"/><path d="M49 32h4.5"/>
+      </g>
+      <circle cx="32" cy="32" r="2.2" fill="#bff0e4"/>
+    </symbol>
+    <symbol id="markMono" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="currentColor"/>
+      <circle cx="32" cy="32" r="28" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="2.6" stroke-dasharray="1.3 2.1"/>
+      <circle cx="32" cy="32" r="23" fill="#0c0a08"/>
+      <circle cx="32" cy="32" r="15.5" fill="none" stroke="currentColor" stroke-width="2.2"/>
+      <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none">
+        <path d="M32 10.5v4.5"/><path d="M32 49v4.5"/><path d="M10.5 32h4.5"/><path d="M49 32h4.5"/>
+      </g>
+      <circle cx="32" cy="32" r="2.2" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============ 1. COVER ============ -->
+<section class="page dark grain" style="display:flex;flex-direction:column;justify-content:space-between">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div class="eyebrow">Brand guide · Version 1.0 · November 2026</div>
+    <div class="eyebrow">coinlens-h71x.onrender.com</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16mm">
+    <svg width="78mm" height="78mm" style="filter:drop-shadow(0 18px 40px rgba(79,209,181,.35))"><use href="#mark"/></svg>
+    <div>
+      <div class="wordmark" style="font-size:92pt">Coin<span class="patina">Lens</span></div>
+      <div style="font-family:var(--display);font-weight:500;font-size:24pt;letter-spacing:-0.02em;color:var(--cream-300);margin-top:4mm">Know what you’re holding.</div>
+      <div class="eyebrow" style="margin-top:8mm">Identify · Grade · Price · List</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <p class="lede" style="margin:0;max-width:170mm">How the CoinLens brand looks, sounds and behaves. The core identity, the rules that keep it coherent, five alternative directions for different moods and channels, and a ready-to-paste prompt for generating logo explorations.</p>
+    <div class="eyebrow">Obsidian &amp; Verdigris</div>
+  </div>
+</section>
+
+<!-- ============ 2. CONTENTS ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">Contents</div>
+  <h2>What’s in here</h2>
+  <div class="cols c2" style="gap:14mm">
+    <div class="toc">
+      <ol>
+        <li><span>The idea</span><span class="n">03</span></li>
+        <li><span>The mark</span><span class="n">04</span></li>
+        <li><span>Mark usage &amp; don’ts</span><span class="n">05</span></li>
+        <li><span>Wordmark &amp; lock-ups</span><span class="n">06</span></li>
+        <li><span>Colour</span><span class="n">07</span></li>
+        <li><span>Colour rules: looking vs. money</span><span class="n">08</span></li>
+        <li><span>Typography</span><span class="n">09</span></li>
+        <li><span>Voice &amp; tone</span><span class="n">10</span></li>
+        <li><span>Texture, motion &amp; photography</span><span class="n">11</span></li>
+      </ol>
+    </div>
+    <div class="toc">
+      <ol>
+        <li><span>Five ways to take the brand</span><span class="n">12</span></li>
+        <li><span>Direction A · Obsidian &amp; Verdigris (core)</span><span class="n">13</span></li>
+        <li><span>Direction B · Mint Sheet (light)</span><span class="n">14</span></li>
+        <li><span>Direction C · Proof Strike (mono)</span><span class="n">15</span></li>
+        <li><span>Direction D · Coin Shop (vintage)</span><span class="n">16</span></li>
+        <li><span>Direction E · Signal (loud)</span><span class="n">17</span></li>
+        <li><span>Applications</span><span class="n">18</span></li>
+        <li><span>Logo prompt for ChatGPT</span><span class="n">19–20</span></li>
+        <li><span>Quick reference</span><span class="n">21</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="hairline" style="margin-top:12mm"></div>
+  <div class="cols c3">
+    <div><h3>How to use this</h3><p class="small muted">Pages 3 to 11 are the rules. Everything CoinLens ships should pass them. Pages 12 to 17 are options: pick a direction per channel, never per screen.</p></div>
+    <div><h3>What’s fixed</h3><p class="small muted">The name, the tagline, the mark’s construction, and the one colour rule: green is for looking, brass is for money.</p></div>
+    <div><h3>What’s flexible</h3><p class="small muted">Background (dark, light, paper), type pairing, texture, energy level. The directions show how far it stretches without breaking.</p></div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>02</span></div>
+</section>
+
+<!-- ============ 3. THE IDEA ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">01 · The idea</div>
+  <h2>A loupe for your pocket change</h2>
+  <div class="cols c2" style="gap:14mm">
+    <div>
+      <p class="lede">CoinLens turns two phone photos into a graded, priced, ready-to-post eBay listing. It is for people selling coins, not people studying them: estate clear-outs, flea-market pickers, hobbyists with a shoebox from Grandpa.</p>
+      <p>The brand borrows from two objects that belong on a coin dealer’s bench: <b>the coin itself</b> (antique brass, reeded edges, engraved numerals) and <b>the jeweller’s loupe</b> (a dark lens, a reticle, the act of looking closely). Everything in the identity is one of those two things.</p>
+      <div class="card" style="margin-top:6mm">
+        <div class="eyebrow">The one-line brief</div>
+        <div style="font-family:var(--display);font-weight:700;font-size:16pt;letter-spacing:-0.03em;margin-top:2mm">A premium tool that respects the seller’s time, tells the truth about the coin, and makes the money legible.</div>
+      </div>
+    </div>
+    <div>
+      <div class="cols c3" style="gap:4mm">
+        <div class="card"><div class="eyebrow">Personality</div><h3 style="margin-top:2mm">Exacting</h3><p class="small muted">Numbers are tabular, labels are engraved, nothing wobbles. The app looks like it measures things.</p></div>
+        <div class="card"><div class="eyebrow">Personality</div><h3 style="margin-top:2mm">Warm</h3><p class="small muted">Near-black is warm, not blue. Paper is cream, not white. It feels like a shop, not a lab.</p></div>
+        <div class="card"><div class="eyebrow">Personality</div><h3 style="margin-top:2mm">Plainspoken</h3><p class="small muted">We say “sold for”, not “market valuation”. Short sentences. No numismatic gatekeeping.</p></div>
+      </div>
+      <div class="hairline"></div>
+      <div class="eyebrow">Positioning</div>
+      <table style="margin-top:2mm">
+        <tr><th>We are</th><td>The fastest honest route from a coin in your hand to a listing that sells.</td></tr>
+        <tr><th>We are not</th><td>A collector’s database, a price-guide subscription, or a grading service.</td></tr>
+        <tr><th>Proof</th><td>Real sold comps, melt value, confidence shown, a listing you can post in one tap.</td></tr>
+        <tr><th>Tagline</th><td><b>Know what you’re holding.</b> Always sentence case, always with the period.</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>03</span></div>
+</section>
+
+<!-- ============ 4. THE MARK ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">02 · The mark</div>
+  <h2>A reeded coin with a lens where the portrait should be</h2>
+  <div class="cols" style="grid-template-columns: 95mm 1fr; gap:14mm; align-items:start">
+    <div style="position:relative">
+      <svg width="95mm" height="95mm" style="filter:drop-shadow(0 18px 40px rgba(79,209,181,.3))"><use href="#mark"/></svg>
+    </div>
+    <div>
+      <p class="lede" style="font-size:11pt">Six parts, each with a job. Reproduce them in this order and at these proportions on a 64-unit grid. Nothing may be added inside the coin.</p>
+      <table>
+        <tr><th>#</th><th>Part</th><th>Spec (64-unit grid)</th><th>Meaning</th></tr>
+        <tr><td class="mono">1</td><td><b>Coin body</b></td><td>Circle r=30, brass gradient #f3e1b0 → #d4a84b → #8f6619 at 135°, soft white highlight top-left</td><td>The thing being sold</td></tr>
+        <tr><td class="mono">2</td><td><b>Reeded edge</b></td><td>Circle r=28, dashed stroke 2.6, dash 1.3 / gap 2.1, #3a2805 at 55%</td><td>Real coins have a milled rim</td></tr>
+        <tr><td class="mono">3</td><td><b>Field</b></td><td>Circle r=23, #0c0a08 (ink-900)</td><td>Obsidian; the dark stage</td></tr>
+        <tr><td class="mono">4</td><td><b>Lens</b></td><td>Circle r=15.5, radial #2fb59a → #145a4e → #0b2b26 off-centre, 1.8 stroke #4fd1b5, glint arc top-left</td><td>The loupe; looking closely</td></tr>
+        <tr><td class="mono">5</td><td><b>Reticle ticks</b></td><td>Four 4.5-unit strokes at N/E/S/W on the field, 1.6 wide, #f3ede1 at 90%</td><td>Measurement, precision</td></tr>
+        <tr><td class="mono">6</td><td><b>Centre dot</b></td><td>Circle r=2.2, #bff0e4</td><td>Focus found</td></tr>
+      </table>
+      <div class="cols c3" style="gap:4mm;margin-top:5mm">
+        <div class="card" style="padding:3mm;text-align:center"><svg width="16mm" height="16mm"><use href="#mark"/></svg><div class="xs muted" style="margin-top:1mm">Full colour (default)</div></div>
+        <div class="card" style="padding:3mm;text-align:center;color:#f3ede1"><svg width="16mm" height="16mm"><use href="#markMono"/></svg><div class="xs muted" style="margin-top:1mm">One-colour cream</div></div>
+        <div class="card" style="padding:3mm;text-align:center;color:#d4a84b"><svg width="16mm" height="16mm"><use href="#markMono"/></svg><div class="xs muted" style="margin-top:1mm">One-colour brass (foil, emboss)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>04</span></div>
+</section>
+
+<!-- ============ 5. MARK USAGE ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">03 · Mark usage</div>
+  <h2>Keep it round, keep it brass, keep the lens green</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1.4fr; gap:12mm">
+    <div>
+      <div class="card">
+        <div class="eyebrow">Clear space &amp; minimum size</div>
+        <div style="display:flex;align-items:center;gap:8mm;margin-top:4mm">
+          <div style="position:relative;width:46mm;height:46mm;border:1px dashed rgb(79 209 181 / .5);border-radius:2mm;display:flex;align-items:center;justify-content:center">
+            <svg width="30mm" height="30mm"><use href="#mark"/></svg>
+            <span class="xs mono" style="position:absolute;top:1mm;left:50%;transform:translateX(-50%);color:var(--patina-300)">¼ dia.</span>
+          </div>
+          <div class="small">
+            <p>Clear space on all sides equals one quarter of the coin’s diameter. Nothing enters it: no type, no edges, no other marks.</p>
+            <p class="muted" style="margin:0">Minimum: <b class="mono">24 px</b> on screen, <b class="mono">8 mm</b> in print. Below 32 px drop the glint arc and reeding; below 20 px use the one-colour version.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:5mm">
+        <div class="eyebrow">On backgrounds</div>
+        <div class="cols c4" style="gap:2.5mm;margin-top:3mm">
+          <div style="background:#0c0a08;border-radius:2mm;padding:3mm;text-align:center;border:1px solid rgb(255 255 255/.08)"><svg width="12mm" height="12mm"><use href="#mark"/></svg><div class="xs muted">Ink</div></div>
+          <div style="background:#f3ede1;border-radius:2mm;padding:3mm;text-align:center"><svg width="12mm" height="12mm"><use href="#mark"/></svg><div class="xs" style="color:#7a7260">Cream</div></div>
+          <div style="background:#145a4e;border-radius:2mm;padding:3mm;text-align:center;color:#f3ede1"><svg width="12mm" height="12mm"><use href="#markMono"/></svg><div class="xs" style="color:#bff0e4">Patina (mono)</div></div>
+          <div style="background:url('img/home.jpg') center/cover;border-radius:2mm;padding:3mm;text-align:center"><div style="display:inline-block;background:#0c0a08;border-radius:999px;padding:2mm;line-height:0"><svg width="8mm" height="8mm"><use href="#mark"/></svg></div><div class="xs" style="color:#f3ede1;background:rgb(12 10 8 / .75);border-radius:1mm;display:inline-block;padding:0 1.5mm;margin-top:1mm">On a photo</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom:3mm">Don’t</div>
+      <div class="cols c3" style="gap:4mm">
+        <div class="dont"><span class="tag">No recolouring</span>
+          <svg width="18mm" height="18mm" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#9ca3af"/><circle cx="32" cy="32" r="23" fill="#0c0a08"/><circle cx="32" cy="32" r="15.5" fill="url(#lensBlue)" stroke="#60a5fa" stroke-width="1.8"/><circle cx="32" cy="32" r="2.2" fill="#dbeafe"/></svg>
+          <div class="xs">Never blue, never silver. CoinLens is never cold.</div></div>
+        <div class="dont"><span class="tag">No gold lens</span>
+          <svg width="18mm" height="18mm" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#brass)"/><circle cx="32" cy="32" r="23" fill="#0c0a08"/><circle cx="32" cy="32" r="15.5" fill="url(#lensGold)" stroke="#e8c874" stroke-width="1.8"/><circle cx="32" cy="32" r="2.2" fill="#f3e1b0"/></svg>
+          <div class="xs">Brass is the coin, green is the looking. Don’t mix them.</div></div>
+        <div class="dont"><span class="tag">No stretching or tilting</span>
+          <svg width="22mm" height="18mm" viewBox="0 0 80 64" style="transform:rotate(-12deg)"><ellipse cx="40" cy="32" rx="38" ry="28" fill="url(#brass)"/><ellipse cx="40" cy="32" rx="29" ry="21" fill="#0c0a08"/><ellipse cx="40" cy="32" rx="19" ry="14" fill="url(#lens)"/></svg>
+          <div class="xs">Always a true circle, always upright. Spin it in motion, not in a still.</div></div>
+        <div class="dont"><span class="tag">No type inside</span>
+          <svg width="18mm" height="18mm" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#brass)"/><circle cx="32" cy="32" r="23" fill="#0c0a08"/><text x="32" y="37" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="15" fill="#f3ede1">CL</text></svg>
+          <div class="xs">The lens is the symbol. Initials, dollar signs and dates stay out.</div></div>
+        <div class="dont"><span class="tag">No outlines or effects</span>
+          <svg width="18mm" height="18mm" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="none" stroke="#d4a84b" stroke-width="2"/><circle cx="32" cy="32" r="15.5" fill="none" stroke="#4fd1b5" stroke-width="2"/><circle cx="32" cy="32" r="2.2" fill="#bff0e4"/></svg>
+          <div class="xs">No hollow versions, bevels, drop shadows on the mark itself, or 3D renders in UI.</div></div>
+        <div class="dont"><span class="tag">No busy backgrounds</span>
+          <div style="background:url('img/listing.jpg') center/cover;border-radius:2mm;height:18mm;display:flex;align-items:center;justify-content:center"><svg width="12mm" height="12mm"><use href="#mark"/></svg></div>
+          <div class="xs" style="margin-top:1mm">On photos, sit it on an ink disc (see left) or don’t use it.</div></div>
+      </div>
+      <div class="do" style="margin-top:5mm"><span class="tag">Do</span>
+        <div class="small">Use the mark at app-icon scale with the ink field bleeding to the icon edge (as in the current iOS icon). Pair it with the wordmark on the left of a header. Let it cast a soft verdigris glow on dark surfaces: <span class="mono xs">drop-shadow(0 8px 20px rgba(79,209,181,.35))</span>.</div></div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>05</span></div>
+</section>
+
+<!-- ============ 6. WORDMARK & LOCKUPS ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">04 · Wordmark &amp; lock-ups</div>
+  <h2>One word, two colours</h2>
+  <div class="cols" style="grid-template-columns: 1.2fr 1fr; gap:14mm">
+    <div>
+      <div class="card" style="padding:10mm 8mm">
+        <div class="eyebrow">Primary lock-up</div>
+        <div style="display:flex;align-items:center;gap:7mm;margin-top:6mm">
+          <svg width="26mm" height="26mm" style="filter:drop-shadow(0 8px 20px rgba(79,209,181,.35))"><use href="#mark"/></svg>
+          <div>
+            <div class="wordmark" style="font-size:40pt">Coin<span class="patina">Lens</span></div>
+            <div style="font-size:9.5pt;color:var(--cream-500);margin-top:1.5mm">Know what you’re holding.</div>
+          </div>
+        </div>
+      </div>
+      <div class="cols c2" style="gap:5mm;margin-top:5mm">
+        <div class="card" style="text-align:center;padding:7mm">
+          <div class="eyebrow">Stacked</div>
+          <svg width="22mm" height="22mm" style="margin-top:4mm"><use href="#mark"/></svg>
+          <div class="wordmark" style="font-size:24pt;margin-top:3mm">Coin<span class="patina">Lens</span></div>
+        </div>
+        <div class="card light" style="text-align:center;padding:7mm;background:#f3ede1;color:#0c0a08;border-color:transparent">
+          <div class="eyebrow" style="color:#7a7260">On cream</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:4mm;margin-top:6mm">
+            <svg width="16mm" height="16mm"><use href="#mark"/></svg>
+            <div class="wordmark" style="font-size:26pt;color:#0c0a08">Coin<span style="color:#1f8a76">Lens</span></div>
+          </div>
+          <div class="xs" style="color:#7a7260;margin-top:3mm">“Lens” drops to patina-600 for contrast</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Rules</h3>
+      <table>
+        <tr><th>Spelling</th><td><b>CoinLens</b>. One word, capital C and L. Never “Coin Lens”, “Coinlens” or “COINLENS”.</td></tr>
+        <tr><th>Type</th><td>Bricolage Grotesque ExtraBold (800), tracking −0.045em, line-height 1. Optical size follows point size.</td></tr>
+        <tr><th>Colour</th><td>“Coin” in cream-100, “Lens” in the patina gradient (#bff0e4 → #4fd1b5 → #2fb59a). On light surfaces “Lens” is solid patina-600. Never brass: the word is about looking.</td></tr>
+        <tr><th>Mark size</th><td>Mark height = 1.6 × cap height of the wordmark. Gap between mark and word = ⅓ mark width.</td></tr>
+        <tr><th>Tagline</th><td>Geist Regular, sentence case, cream-500, roughly ¼ the wordmark size. Sits under the word, left-aligned with “C”. Drop it below 28 pt.</td></tr>
+        <tr><th>In running text</th><td>Set “CoinLens” in the body face, no special colour. The wordmark is for headers, covers and marketing.</td></tr>
+        <tr><th>Sub-brands</th><td>Append in Geist Medium after a thin space: <span class="wordmark" style="font-size:12pt">Coin<span class="patina">Lens</span></span> <span style="font-weight:500">Batch</span>. Never create a second mark.</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>06</span></div>
+</section>
+
+<!-- ============ 7. COLOUR ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">05 · Colour</div>
+  <h2>Obsidian, cream, verdigris, brass</h2>
+  <div class="cols c4" style="gap:6mm">
+    <div>
+      <h3>Ink</h3><p class="xs muted">Warm near-black surfaces. Never a blue-black.</p>
+      <div class="scale">
+        <div class="swatch" style="background:#070605;color:#9a917f"><b>ink-950</b>#070605</div>
+        <div class="swatch" style="background:#0c0a08;color:#9a917f"><b>ink-900 · canvas</b>#0c0a08</div>
+        <div class="swatch" style="background:#15120e;color:#9a917f"><b>ink-800 · cards</b>#15120e</div>
+        <div class="swatch" style="background:#201b15;color:#d3cab8"><b>ink-700</b>#201b15</div>
+        <div class="swatch" style="background:#2e2820;color:#d3cab8"><b>ink-600 · borders</b>#2e2820</div>
+      </div>
+    </div>
+    <div>
+      <h3>Cream</h3><p class="xs muted">Paper-coloured type. Never pure white.</p>
+      <div class="scale">
+        <div class="swatch" style="background:#f3ede1;color:#2e2820"><b>cream-100 · text</b>#f3ede1</div>
+        <div class="swatch" style="background:#d3cab8;color:#2e2820"><b>cream-300 · secondary</b>#d3cab8</div>
+        <div class="swatch" style="background:#9a917f;color:#0c0a08"><b>cream-500 · labels</b>#9a917f</div>
+      </div>
+    </div>
+    <div>
+      <h3>Patina</h3><p class="xs muted">Verdigris green. Everything about looking and doing.</p>
+      <div class="scale">
+        <div class="swatch" style="background:#bff0e4;color:#145a4e"><b>patina-200</b>#bff0e4</div>
+        <div class="swatch" style="background:#8fe3cf;color:#145a4e"><b>patina-300 · links</b>#8fe3cf</div>
+        <div class="swatch" style="background:#4fd1b5;color:#04211b"><b>patina-400 · primary</b>#4fd1b5</div>
+        <div class="swatch" style="background:#2fb59a;color:#04211b"><b>patina-500</b>#2fb59a</div>
+        <div class="swatch" style="background:#1f8a76;color:#bff0e4"><b>patina-600 · on light</b>#1f8a76</div>
+        <div class="swatch" style="background:#145a4e;color:#bff0e4"><b>patina-700</b>#145a4e</div>
+      </div>
+    </div>
+    <div>
+      <h3>Brass</h3><p class="xs muted">Antique gold. Money, value and warnings only.</p>
+      <div class="scale">
+        <div class="swatch" style="background:#f3e1b0;color:#5e400a"><b>gold-200</b>#f3e1b0</div>
+        <div class="swatch" style="background:#e8c874;color:#5e400a"><b>gold-300</b>#e8c874</div>
+        <div class="swatch" style="background:#d4a84b;color:#1d1303"><b>gold-400 · prices</b>#d4a84b</div>
+        <div class="swatch" style="background:#b9892e;color:#1d1303"><b>gold-500</b>#b9892e</div>
+        <div class="swatch" style="background:#8f6619;color:#f3e1b0"><b>gold-600 · on light</b>#8f6619</div>
+        <div class="swatch" style="background:#5e400a;color:#f3e1b0"><b>gold-700</b>#5e400a</div>
+      </div>
+    </div>
+  </div>
+  <div class="hairline"></div>
+  <div class="cols c3" style="gap:6mm">
+    <div class="small"><b>Proportions.</b> On any screen: roughly 80% ink, 15% cream, 4% patina, 1% brass. Brass is rare so a price always jumps out.</div>
+    <div class="small"><b>Gradients.</b> Only two: the patina gradient (200 → 400 → 500 at 120°) and the brass gradient (200 → 400 → 500). Used for the wordmark, primary buttons and prices. Nowhere else.</div>
+    <div class="small"><b>Glows.</b> Dark pages carry a verdigris radial glow top-left at 16% and a brass glow bottom-right at 10%. Film grain at 7% on top. That is the whole “atmosphere”.</div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>07</span></div>
+</section>
+
+<!-- ============ 8. COLOUR RULES ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">06 · Colour rules</div>
+  <h2>Green is for <span class="patina">looking</span>. Brass is for <span class="brass">money</span>.</h2>
+  <p class="lede" style="max-width:230mm;margin-bottom:4mm">This is the single most important rule in the identity. It means a user can tell, without reading, whether a thing on screen is an action or a dollar amount.</p>
+  <div class="cols c2" style="gap:10mm">
+    <div class="card">
+      <div class="eyebrow" style="color:var(--patina-300)">Patina · looking &amp; doing</div>
+      <ul class="small" style="margin:3mm 0 4mm;padding-left:5mm;line-height:1.7">
+        <li>Primary buttons (Identify coin, Save, Continue)</li>
+        <li>Focus rings, active chips, toggles, checkboxes</li>
+        <li>Links, progress, the reticle, crop handles</li>
+        <li>Headline emphasis and the “Lens” in the wordmark</li>
+        <li>Success states and the install prompt</li>
+      </ul>
+      <div style="display:flex;gap:3mm;align-items:center;flex-wrap:wrap">
+        <span class="btn btn-primary">Identify coin</span>
+        <span class="pill" style="color:var(--patina-300)">High confidence</span>
+        <span style="color:var(--patina-300);text-decoration:underline" class="small">Verify certificate ↗</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="eyebrow" style="color:var(--gold-300)">Brass · money &amp; caution</div>
+      <ul class="small" style="margin:3mm 0 4mm;padding-left:5mm;line-height:1.7">
+        <li>Prices, melt value, totals, profit</li>
+        <li>“List at”, “Suggested”, “Asking” cards (gold border at 30%, fill at 10%)</li>
+        <li>The one brass button: <i>List on eBay</i></li>
+        <li>Warnings: medium confidence, blurry photo, below melt</li>
+        <li>Charts of value over time</li>
+      </ul>
+      <div style="display:flex;gap:3mm;align-items:center;flex-wrap:wrap">
+        <span class="btn btn-brass">List on eBay</span>
+        <span class="brass" style="font-family:var(--display);font-weight:800;font-size:20pt;letter-spacing:-0.03em;font-variant-numeric:tabular-nums">$184</span>
+        <span class="pill" style="color:var(--gold-300)">Medium confidence</span>
+      </div>
+    </div>
+  </div>
+  <div class="cols c3" style="gap:5mm;margin-top:4mm">
+    <div class="do"><span class="tag">Do</span><div class="small">Put a brass price inside a patina-bordered card. The roles stay readable.</div></div>
+    <div class="dont"><span class="tag">Don’t</span><div class="small">Make a brass “Continue” button, or a green price. The user loses the cue.</div></div>
+    <div class="dont"><span class="tag">Don’t</span><div class="small">Introduce red for errors. Errors are cream text on an ink-800 card with a thin brass border, and a plain sentence.</div></div>
+  </div>
+  <div class="hairline" style="margin:4mm 0 3mm"></div>
+  <div class="eyebrow">Contrast (WCAG, on ink-900 #0c0a08)</div>
+  <table class="xs" style="margin-top:1mm">
+    <tr><th>Pair</th><th>Ratio</th><th>Use</th><th>Pair</th><th>Ratio</th><th>Use</th></tr>
+    <tr><td>cream-100 on ink-900</td><td class="mono">17.5 : 1</td><td>Body text</td><td>patina-400 on ink-900</td><td class="mono">10.4 : 1</td><td>Links, labels</td></tr>
+    <tr><td>cream-500 on ink-900</td><td class="mono">6.5 : 1</td><td>Eyebrows (small, so keep ≥ 10.5 px)</td><td>gold-400 on ink-900</td><td class="mono">8.9 : 1</td><td>Prices</td></tr>
+    <tr><td>#04211b on patina-400</td><td class="mono">9.7 : 1</td><td>Primary button text</td><td>patina-600 on cream-100</td><td class="mono">4.6 : 1</td><td>“Lens” on light surfaces (AA)</td></tr>
+  </table>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>08</span></div>
+</section>
+
+<!-- ============ 9. TYPOGRAPHY ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">07 · Typography</div>
+  <h2>A display face, a workhorse, and a ledger</h2>
+  <div class="cols c3" style="gap:6mm">
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Display · Bricolage Grotesque</div>
+      <div style="font-family:var(--display);font-weight:800;font-size:26pt;letter-spacing:-0.045em;line-height:.95;margin:3mm 0 3mm">Two photos.<br><span class="patina">One listing,</span><br><span class="brass">priced to sell.</span></div>
+      <p class="small">Headlines, the wordmark, big numbers. ExtraBold 800 at −0.035 to −0.045em. Variable optical size and width axes: let it tighten at large sizes. <b>Bricolage has no italic. Never fake one.</b></p>
+      <p class="xs muted" style="margin:0">Google Fonts, OFL. Fallback: Geist.</p>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Body · Geist</div>
+      <div style="font-family:var(--sans);font-size:11pt;line-height:1.45;margin:3mm 0 3mm">Front and back of any coin. CoinLens finds it, grades it, checks what the same coin actually sold for, and writes the eBay listing for you.</div>
+      <p class="small">Everything readable: paragraphs, buttons, form fields, table cells. Regular 400 for text, Medium 500 for buttons and names, SemiBold 600 for small headings. Line-height 1.45 to 1.5.</p>
+      <p class="xs muted" style="margin:0">Google Fonts / Vercel, OFL. Fallback: system-ui.</p>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Ledger · Geist Mono</div>
+      <div style="margin:4mm 0 3mm">
+        <div class="eyebrow" style="color:var(--cream-500)">Where the price comes from</div>
+        <div class="mono" style="font-size:11pt;margin-top:2mm;font-variant-numeric:tabular-nums">1921 S · 26.73 g · 90% Ag<br>Melt <span class="brass">$24.10</span> · Sold <span class="brass">$168–$212</span></div>
+      </div>
+      <p class="small">Eyebrow labels (10.5 px, 500, tracking 0.2em, uppercase, cream-500), weights, dates, SKUs, cert numbers, and any column of figures. Always tabular numerals.</p>
+      <p class="xs muted" style="margin:0">Google Fonts / Vercel, OFL. Fallback: ui-monospace.</p>
+    </div>
+  </div>
+  <div class="hairline" style="margin:4mm 0"></div>
+  <div class="cols" style="grid-template-columns: 1.3fr 1fr; gap:10mm">
+    <table class="xs" style="--pad:1.2mm">
+      <tr><th>Role</th><th>Face / weight</th><th>Size (mobile)</th><th>Tracking</th></tr>
+      <tr><td>Hero headline</td><td>Bricolage 800</td><td class="mono">34–40 px</td><td class="mono">−0.045em</td></tr>
+      <tr><td>Section title</td><td>Bricolage 800</td><td class="mono">22–26 px</td><td class="mono">−0.035em</td></tr>
+      <tr><td>Card heading</td><td>Geist 600</td><td class="mono">15–16 px</td><td class="mono">−0.01em</td></tr>
+      <tr><td>Body</td><td>Geist 400</td><td class="mono">15 px / 1.5</td><td class="mono">0</td></tr>
+      <tr><td>Eyebrow</td><td>Geist Mono 500, caps</td><td class="mono">10.5 px</td><td class="mono">0.2em</td></tr>
+      <tr><td>Big price</td><td>Bricolage 800, brass, tabular</td><td class="mono">28–34 px</td><td class="mono">−0.03em</td></tr>
+    </table>
+    <div>
+      <div class="do"><span class="tag">Do</span><div class="small">Mix one display line with mono labels on the same card. The contrast between loud and engraved is the look.</div></div>
+      <div class="dont" style="margin-top:3mm"><span class="tag">Don’t</span><div class="small">Set paragraphs in Bricolage, use italics anywhere, letter-space body text, or use more than these three faces (Fraunces appears only in Direction D).</div></div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>09</span></div>
+</section>
+
+<!-- ============ 10. VOICE ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">08 · Voice &amp; tone</div>
+  <h2>Like a good dealer at the counter</h2>
+  <div class="cols c2" style="gap:12mm">
+    <div>
+      <p class="lede" style="font-size:11.5pt">Knows the coin, tells you straight, doesn’t waste your afternoon. Confident about facts, honest about uncertainty, never condescending about what you don’t know.</p>
+      <div class="cols c2" style="gap:4mm;margin-top:2mm">
+        <div class="card" style="padding:4mm"><h3>Plain</h3><p class="small muted" style="margin:0">Short sentences. Everyday words. “Sold for”, not “realised”. “Worn”, before “VG-8”.</p></div>
+        <div class="card" style="padding:4mm"><h3>Specific</h3><p class="small muted" style="margin:0">Numbers over adjectives. “Three sold this month for $160–$210” beats “strong demand”.</p></div>
+        <div class="card" style="padding:4mm"><h3>Honest</h3><p class="small muted" style="margin:0">Show confidence levels. Say when a close-up is needed. Never pretend a blurry photo is fine.</p></div>
+        <div class="card" style="padding:4mm"><h3>Warm, not cute</h3><p class="small muted" style="margin:0">No exclamation marks, no emoji in product copy, no “oops”. Warmth comes from being useful.</p></div>
+      </div>
+      <div class="hairline"></div>
+      <div class="eyebrow">Alternate lines (for ads, store banners, social)</div>
+      <ul class="small" style="margin:2mm 0 0;padding-left:5mm;line-height:1.8">
+        <li>Know what you’re holding. <span class="muted">(primary, always)</span></li>
+        <li>Pocket change to paid.</li>
+        <li>Two photos. One listing, priced to sell.</li>
+        <li>Grandpa’s coffee can, finally sorted.</li>
+        <li>Stop guessing. Start listing.</li>
+      </ul>
+    </div>
+    <div>
+      <table class="xs" style="--pad:1.4mm">
+        <tr><th>Moment</th><th>Say</th><th>Not</th></tr>
+        <tr><td>Hero</td><td>Two photos. One listing, priced to sell.</td><td class="muted">AI-powered numismatic valuation platform</td></tr>
+        <tr><td>Empty state</td><td>Snap the front and the back. Any angle, any light; we’ll find the coin.</td><td class="muted">No images uploaded yet!</td></tr>
+        <tr><td>Working</td><td>Reading the coin… checking what it sold for…</td><td class="muted">Processing your request</td></tr>
+        <tr><td>Result</td><td>1921-S Morgan dollar, about Very Fine. Three sold this month for $160–$210.</td><td class="muted">Identification complete. Estimated value: $185.</td></tr>
+        <tr><td>Uncertain</td><td>We’re fairly sure, not certain. A close-up of the mint mark would settle it.</td><td class="muted">Low confidence result</td></tr>
+        <tr><td>Limit hit</td><td>That’s 25 scans today. Sign in for more, or come back tomorrow.</td><td class="muted">Error 429: quota exceeded</td></tr>
+        <tr><td>Price caveat</td><td>Silver melt is $24 today, so don’t list below that.</td><td class="muted">Intrinsic metal value threshold</td></tr>
+        <tr><td>Hint field</td><td>e.g. from Grandpa’s collection, weighs 26.7 g, came in a 2x2 marked “1921 S Morgan”</td><td class="muted">Enter additional metadata</td></tr>
+      </table>
+      <div class="card" style="margin-top:3mm;padding:3mm 4mm">
+        <div class="eyebrow">Mechanics</div>
+        <p class="small" style="margin:2mm 0 0">Sentence case everywhere, including buttons and titles. Oxford comma. Curly quotes and apostrophes. Dollar amounts as $184, ranges as $160–$210 with an en dash. Grades in plain words first, Sheldon scale in parentheses when useful. American English and American references: the audience sells on eBay US.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>10</span></div>
+</section>
+
+<!-- ============ 11. TEXTURE / MOTION / PHOTO ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">09 · Texture, motion &amp; photography</div>
+  <h2>Grain, glow, and a slow-turning reticle</h2>
+  <div class="cols c3" style="gap:8mm">
+    <div>
+      <h3>Texture</h3>
+      <div style="height:34mm;border-radius:3mm;position:relative;overflow:hidden;background:#0c0a08;border:1px solid rgb(255 255 255/.08);background-image:radial-gradient(60% 50% at 15% 0%, rgb(79 209 181 / .22), transparent 70%),radial-gradient(50% 40% at 100% 100%, rgb(212 168 75 / .16), transparent 65%)">
+        <div class="grain" style="position:absolute;inset:0;isolation:isolate"></div>
+        <div class="xs mono" style="position:absolute;left:3mm;bottom:2.5mm;color:var(--cream-500)">glow 16% + grain 7% + 1 px hairline border</div>
+      </div>
+      <p class="small" style="margin-top:3mm">Every dark surface has the two radial glows and a film-grain layer (SVG feTurbulence, 7% opacity). Cards use 1 px borders at 8% white and an inner highlight at 6%. No drop shadows on cards except the primary-button glow.</p>
+    </div>
+    <div>
+      <h3>Motion</h3>
+      <div class="small" style="display:grid;gap:2.5mm">
+        <div style="border-bottom:1px solid rgb(255 255 255/.08);padding-bottom:2mm"><span class="mono" style="color:var(--patina-300)">reticle</span> <span class="mono xs muted">· 14 s / 22 s linear</span><br>Dashed ring with four ticks rotates around the working photo; a second ring counter-rotates.</div>
+        <div style="border-bottom:1px solid rgb(255 255 255/.08);padding-bottom:2mm"><span class="mono" style="color:var(--patina-300)">coin-spin</span> <span class="mono xs muted">· 1.6 s ease-in-out</span><br>The mark turns on its Y axis while waiting.</div>
+        <div style="border-bottom:1px solid rgb(255 255 255/.08);padding-bottom:2mm"><span class="mono" style="color:var(--patina-300)">fade-up</span> <span class="mono xs muted">· 0.5 s, cubic-bezier(.2,.7,.2,1)</span><br>Results arrive from 10 px below.</div>
+        <div style="border-bottom:1px solid rgb(255 255 255/.08);padding-bottom:2mm"><span class="mono" style="color:var(--patina-300)">pulse-ring</span> <span class="mono xs muted">· 2.4 s ease-out</span><br>A soft patina ring expands once on success.</div>
+      </div>
+      <p class="small muted" style="margin-top:3mm">Motion is slow and mechanical, like a loupe being adjusted. Nothing bounces. Respect <span class="mono">prefers-reduced-motion</span>.</p>
+    </div>
+    <div>
+      <h3>Photography</h3>
+      <div style="height:34mm;border-radius:3mm;background:#0c0a08;border:1px solid rgb(255 255 255/.08);display:flex;align-items:center;justify-content:center;gap:6mm;background-image:radial-gradient(60% 50% at 15% 0%, rgb(79 209 181 / .16), transparent 70%)">
+        <div style="width:24mm;height:24mm;border-radius:999px;background:radial-gradient(circle at 35% 30%, #f3e1b0 0%, #d4a84b 45%, #8f6619 100%);box-shadow:0 0 0 2px rgb(79 209 181 / .6),0 0 0 6px rgb(79 209 181 / .08),0 18px 40px -16px rgb(79 209 181 / .4);position:relative"><div style="position:absolute;inset:2.2mm;border-radius:999px;border:1.2px dashed rgb(58 40 5 / .55)"></div></div>
+        <div style="width:24mm;height:24mm;border-radius:999px;background:radial-gradient(circle at 60% 65%, #e8c874 0%, #b9892e 50%, #5e400a 100%);box-shadow:0 0 0 2px rgb(79 209 181 / .6),0 0 0 6px rgb(79 209 181 / .08);position:relative"><div style="position:absolute;inset:2.2mm;border-radius:999px;border:1.2px dashed rgb(58 40 5 / .55)"></div></div>
+      </div>
+      <p class="small" style="margin-top:3mm">Coins are the hero. Show them large, centred, on ink or on a real surface (felt, wood, a 2x2 flip). Raking light to catch the relief. No stock photos of hands holding phones, no piles of generic gold, no green-screen renders.</p>
+      <p class="small muted" style="margin:0">User photos in the app get the “coin-ring”: a 2 px patina bezel with a soft outer glow, so even a kitchen-table snapshot looks examined.</p>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>11</span></div>
+</section>
+
+<!-- ============ 12. DIRECTIONS OVERVIEW ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">10 · Directions</div>
+  <h2>Five ways to take the brand</h2>
+  <p class="lede">Same name, same mark, same colour rule. What changes is the surface, the type pairing and the energy. Pick one per channel and stick to it; the app itself stays in Direction A.</p>
+  <div class="cols c5" style="gap:4mm;margin-top:2mm">
+    <div class="card" style="padding:4mm;background:#0c0a08">
+      <div class="num">A</div><h3 style="margin-top:2mm">Obsidian &amp; Verdigris</h3>
+      <div style="display:flex;gap:1mm;margin:2mm 0"><span style="flex:1;height:5mm;background:#0c0a08;border:1px solid #2e2820;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#f3ede1;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#4fd1b5;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#d4a84b;border-radius:1mm"></span></div>
+      <p class="xs muted" style="margin:0">The core. The app, the website, the store. Dark, warm, precise.</p>
+    </div>
+    <div class="card" style="padding:4mm;background:#f3ede1;color:#0c0a08;border-color:transparent">
+      <div class="num" style="color:#1f8a76">B</div><h3 style="margin-top:2mm">Mint Sheet</h3>
+      <div style="display:flex;gap:1mm;margin:2mm 0"><span style="flex:1;height:5mm;background:#f3ede1;border:1px solid #d3cab8;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#0c0a08;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#1f8a76;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#b9892e;border-radius:1mm"></span></div>
+      <p class="xs" style="margin:0;color:#4a4336">The light twin. Print, PDFs, eBay store header, daylight marketing.</p>
+    </div>
+    <div class="card" style="padding:4mm;background:#000;border-color:#333">
+      <div class="num" style="color:#fff">C</div><h3 style="margin-top:2mm;color:#fff">Proof Strike</h3>
+      <div style="display:flex;gap:1mm;margin:2mm 0"><span style="flex:1;height:5mm;background:#000;border:1px solid #333;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#fff;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#fff;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#d4a84b;border-radius:1mm"></span></div>
+      <p class="xs" style="margin:0;color:#aaa">Stripped to black, white and one brass hit. Merch, stickers, developer docs.</p>
+    </div>
+    <div class="card" style="padding:4mm;background:#2a1014;border-color:#4a1d22">
+      <div class="num" style="color:#e8c874;font-family:var(--serif);font-weight:700">D</div><h3 style="margin-top:2mm;font-family:var(--serif);font-weight:600;color:#f3e1b0">Coin Shop</h3>
+      <div style="display:flex;gap:1mm;margin:2mm 0"><span style="flex:1;height:5mm;background:#2a1014;border:1px solid #4a1d22;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#f3e1b0;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#2fb59a;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#e8c874;border-radius:1mm"></span></div>
+      <p class="xs" style="margin:0;color:#d3cab8">Oxblood, brass, a serif. For collectors, shows, the newsletter.</p>
+    </div>
+    <div class="card" style="padding:4mm;background:#04211b;border-color:#145a4e">
+      <div class="num" style="color:#bff0e4">E</div><h3 style="margin-top:2mm;color:#bff0e4">Signal</h3>
+      <div style="display:flex;gap:1mm;margin:2mm 0"><span style="flex:1;height:5mm;background:#04211b;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#bff0e4;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#4fd1b5;border-radius:1mm"></span><span style="flex:1;height:5mm;background:#f3e1b0;border-radius:1mm"></span></div>
+      <p class="xs" style="margin:0;color:#8fe3cf">Patina turned up. Short video, TikTok, app-store screenshots, launch posts.</p>
+    </div>
+  </div>
+  <div class="hairline"></div>
+  <table>
+    <tr><th>Channel</th><th>Direction</th><th>Channel</th><th>Direction</th><th>Channel</th><th>Direction</th></tr>
+    <tr><td>App, website, email</td><td><b>A</b></td><td>Printed one-pager, invoices, this guide</td><td><b>B</b></td><td>Sticker, tee, GitHub README</td><td><b>C</b></td></tr>
+    <tr><td>eBay store banner</td><td><b>B</b></td><td>Coin-show flyer, collector newsletter</td><td><b>D</b></td><td>TikTok, Reels, Shorts, launch tweet</td><td><b>E</b></td></tr>
+    <tr><td>App-store listing</td><td><b>A</b> (screens) + <b>E</b> (captions)</td><td>Partner deck</td><td><b>A</b> or <b>B</b></td><td>Pitch to a dealer</td><td><b>D</b></td></tr>
+  </table>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>12</span></div>
+</section>
+
+<!-- ============ 13. DIRECTION A ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">Direction A · Core</div>
+  <h2>Obsidian &amp; Verdigris</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap:12mm">
+    <div>
+      <p class="lede" style="font-size:11.5pt">The identity as shipped. A dark, warm bench with a green lens and a brass coin. Everything in pages 3 to 11 describes this direction in full.</p>
+      <table class="small">
+        <tr><th>Mood</th><td>A dealer’s back room at night. Felt, brass, a desk lamp.</td></tr>
+        <tr><th>Surface</th><td>ink-900 with glows and grain; cards ink-800</td></tr>
+        <tr><th>Type</th><td>Bricolage 800 / Geist / Geist Mono</td></tr>
+        <tr><th>Accent</th><td>patina-400 for action, gold-400 for money</td></tr>
+        <tr><th>Texture</th><td>Grain 7%, hairlines, reticle</td></tr>
+        <tr><th>Use for</th><td>The product. Website, app, emails, partner decks.</td></tr>
+      </table>
+      <div class="do" style="margin-top:4mm"><span class="tag">Why it works</span><div class="small">Dark backgrounds make coin photos look expensive and make a brass price pop. The green is unexpected in a money app, which is exactly why it’s ownable.</div></div>
+    </div>
+    <div style="display:flex;gap:6mm;align-items:flex-start">
+      <img class="shot" src="img/home.jpg" style="width:52mm" alt="" />
+      <img class="shot" src="img/batch.jpg" style="width:52mm" alt="" />
+      <div style="flex:1">
+        <img class="shot" src="img/og.jpg" style="width:100%" alt="" />
+        <p class="xs muted" style="margin-top:2mm">Social card: mark left, wordmark right, tagline, mono eyebrow.</p>
+        <img class="shot" src="img/apple-icon.png" style="width:22mm;border-radius:5mm;margin-top:2mm" alt="" />
+        <p class="xs muted" style="margin-top:1mm">App icon: field bleeds to the edge.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>13</span></div>
+</section>
+
+<!-- ============ 14. DIRECTION B ============ -->
+<section class="page light">
+  <div class="eyebrow">Direction B · Light</div>
+  <h2 style="color:#0c0a08">Mint Sheet</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap:12mm">
+    <div>
+      <p class="lede">The same brand in daylight. Cream paper, ink type, verdigris pulled down to patina-600 so it still reads on light. Brass darkens to gold-600 for the same reason. Think of a mint sheet or an auction catalogue page.</p>
+      <table class="small">
+        <tr><th>Mood</th><td>A catalogue on a kitchen table. Clean, unhurried.</td></tr>
+        <tr><th>Surface</th><td>cream-100 #f3ede1; cards white at 55%; rules cream-300</td></tr>
+        <tr><th>Type</th><td>Unchanged: Bricolage 800 / Geist / Geist Mono</td></tr>
+        <tr><th>Accent</th><td>patina-600 #1f8a76 for action, gold-600 #8f6619 for money</td></tr>
+        <tr><th>Texture</th><td>No glow. Very light paper grain allowed in print.</td></tr>
+        <tr><th>Use for</th><td>Printed material, PDFs, eBay store banner, invoices, daytime ads</td></tr>
+      </table>
+      <div class="dont" style="margin-top:4mm"><span class="tag">Don’t</span><div class="small">Use the light gradients from Direction A here. On cream, “Lens” and prices are solid colours. Never pure white (#fff) as a page background.</div></div>
+    </div>
+    <div>
+      <div class="card" style="padding:7mm;background:#fff9ee;border-color:#d3cab8">
+        <div style="display:flex;align-items:center;gap:4mm">
+          <svg width="14mm" height="14mm"><use href="#mark"/></svg>
+          <div class="wordmark" style="font-size:24pt;color:#0c0a08">Coin<span style="color:#1f8a76">Lens</span></div>
+          <span class="eyebrow" style="margin-left:auto">Listing · #CL-0412</span>
+        </div>
+        <div style="font-family:var(--display);font-weight:800;font-size:22pt;letter-spacing:-0.035em;margin:6mm 0 2mm;color:#0c0a08">1921-S Morgan Silver Dollar</div>
+        <div class="mono small" style="color:#7a7260">About Very Fine (VF-20) · 26.73 g · 90% silver</div>
+        <div class="cols c3" style="gap:3mm;margin-top:5mm">
+          <div style="border:1px solid #d3cab8;border-radius:2.5mm;padding:3mm"><div class="eyebrow">Recent sold</div><div class="mono" style="font-size:13pt;color:#8f6619;font-weight:600;margin-top:1mm">$160–$210</div></div>
+          <div style="border:1px solid #8f6619;border-radius:2.5mm;padding:3mm;background:rgb(143 102 25 / .08)"><div class="eyebrow">List at</div><div class="mono" style="font-size:13pt;color:#8f6619;font-weight:600;margin-top:1mm">$184</div></div>
+          <div style="border:1px solid #d3cab8;border-radius:2.5mm;padding:3mm"><div class="eyebrow">Melt today</div><div class="mono" style="font-size:13pt;color:#8f6619;font-weight:600;margin-top:1mm">$24.10</div></div>
+        </div>
+        <div style="display:flex;gap:3mm;margin-top:5mm">
+          <span class="btn" style="background:#1f8a76;color:#f3ede1">Copy listing</span>
+          <span class="btn" style="border:1px solid #0c0a08;color:#0c0a08">Save to my coins</span>
+        </div>
+      </div>
+      <p class="xs" style="color:#7a7260;margin-top:3mm">A printable listing sheet in Direction B. Same hierarchy as the app, inverted.</p>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>14</span></div>
+</section>
+
+<!-- ============ 15. DIRECTION C ============ -->
+<section class="page" style="background:#000;color:#fff">
+  <div class="eyebrow" style="color:#888">Direction C · Mono</div>
+  <h2 style="color:#fff">Proof Strike</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap:12mm">
+    <div>
+      <p class="lede" style="color:#bbb">Everything stripped back to a proof coin’s contrast: true black, true white, and a single brass hit for the one thing that costs money. No green at all, which is why this direction is for objects, not interfaces.</p>
+      <table class="small" style="color:#ddd">
+        <tr><th style="color:#777;border-color:#222">Mood</th><td style="border-color:#222">A proof strike under glass. Hard edges, one glint.</td></tr>
+        <tr><th style="color:#777;border-color:#222">Surface</th><td style="border-color:#222">#000 or #fff, nothing between</td></tr>
+        <tr><th style="color:#777;border-color:#222">Type</th><td style="border-color:#222">Geist Mono for everything; Bricolage only for the wordmark</td></tr>
+        <tr><th style="color:#777;border-color:#222">Accent</th><td style="border-color:#222">gold-400 #d4a84b, once per surface</td></tr>
+        <tr><th style="color:#777;border-color:#222">Mark</th><td style="border-color:#222">One-colour version, white or brass</td></tr>
+        <tr><th style="color:#777;border-color:#222">Use for</th><td style="border-color:#222">Stickers, tees, 2x2 flip inserts, GitHub README, API docs, laser engraving</td></tr>
+      </table>
+      <div class="do" style="margin-top:4mm;border-color:#444;background:#111"><span class="tag" style="color:#d4a84b">Why it exists</span><div class="small" style="color:#ccc">Merch and docs get printed and photocopied. A mono version survives a one-colour press, a vinyl cutter and a dark-mode Markdown renderer.</div></div>
+    </div>
+    <div class="cols c2" style="gap:5mm">
+      <div style="background:#000;border:1px solid #333;border-radius:4mm;padding:8mm;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff">
+        <svg width="34mm" height="34mm"><use href="#markMono"/></svg>
+        <div class="wordmark" style="font-size:22pt;margin-top:4mm">CoinLens</div>
+        <div class="mono xs" style="letter-spacing:.2em;text-transform:uppercase;color:#888;margin-top:2mm">Know what you’re holding.</div>
+      </div>
+      <div style="background:#fff;border-radius:4mm;padding:8mm;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000">
+        <svg width="34mm" height="34mm" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#000"/><circle cx="32" cy="32" r="28" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.6" stroke-dasharray="1.3 2.1"/><circle cx="32" cy="32" r="23" fill="#fff"/><circle cx="32" cy="32" r="15.5" fill="none" stroke="#000" stroke-width="2.2"/><g stroke="#000" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M32 10.5v4.5"/><path d="M32 49v4.5"/><path d="M10.5 32h4.5"/><path d="M49 32h4.5"/></g><circle cx="32" cy="32" r="2.2" fill="#d4a84b"/></svg>
+        <div class="wordmark" style="font-size:22pt;margin-top:4mm">CoinLens</div>
+        <div class="mono xs" style="letter-spacing:.2em;text-transform:uppercase;color:#666;margin-top:2mm">Identify · Grade · Price · List</div>
+      </div>
+      <div style="grid-column:1/-1;background:#0a0a0a;border:1px solid #333;border-radius:4mm;padding:5mm;font-family:var(--mono);font-size:9pt;line-height:1.7;color:#ddd">
+        <span style="color:#888"># CoinLens</span><br>
+        Two photos in. A graded, priced, eBay-ready listing out.<br>
+        <span style="color:#888">$</span> git clone github.com/adrianchromenko/coin-scanner<br>
+        <span style="color:#888">$</span> npm run dev <span style="color:#d4a84b">→ http://localhost:3000</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer" style="color:#666"><span>CoinLens Brand Guide</span><span>15</span></div>
+</section>
+
+<!-- ============ 16. DIRECTION D ============ -->
+<section class="page grain" style="background:#2a1014;color:#f3e1b0;background-image:radial-gradient(60% 50% at 10% 0%, rgb(232 200 116 / .14), transparent 70%)">
+  <div class="eyebrow" style="color:#c9a27a">Direction D · Vintage</div>
+  <h2 style="font-family:var(--serif);font-weight:600;letter-spacing:-0.01em;color:#f3e1b0">Coin Shop</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap:12mm">
+    <div>
+      <p class="lede" style="color:#e2cfa8;font-family:var(--serif);font-size:13pt">The brand in its Sunday clothes. Oxblood leather, brass hardware and a serif with some swash to it. Verdigris stays, but only as the lens and small accents, like the patina on an old shop sign.</p>
+      <table class="small" style="color:#e2cfa8">
+        <tr><th style="color:#c9a27a;border-color:#4a1d22">Mood</th><td style="border-color:#4a1d22">A downtown coin shop since 1962. Glass cases, velvet trays.</td></tr>
+        <tr><th style="color:#c9a27a;border-color:#4a1d22">Surface</th><td style="border-color:#4a1d22">Oxblood #2a1014; deep #1a0a0c; rules #4a1d22</td></tr>
+        <tr><th style="color:#c9a27a;border-color:#4a1d22">Type</th><td style="border-color:#4a1d22">Fraunces (600/700) for display, Geist for body, Geist Mono for ledgers</td></tr>
+        <tr><th style="color:#c9a27a;border-color:#4a1d22">Accent</th><td style="border-color:#4a1d22">gold-300 #e8c874 leads; patina-500 for the lens and one detail</td></tr>
+        <tr><th style="color:#c9a27a;border-color:#4a1d22">Texture</th><td style="border-color:#4a1d22">Grain, engraved line rules, ornament dots “·”</td></tr>
+        <tr><th style="color:#c9a27a;border-color:#4a1d22">Use for</th><td style="border-color:#4a1d22">Coin-show flyers, collector newsletter, dealer pitch, anniversary posts</td></tr>
+      </table>
+      <div class="dont" style="margin-top:4mm;border-color:#8a3a3a;background:rgb(232 120 90 / .1)"><span class="tag" style="color:#e8a07a">Careful</span><div class="small" style="color:#e2cfa8">This is a costume, not a redesign. The mark does not change. Never bring Fraunces into the app.</div></div>
+    </div>
+    <div>
+      <div style="border:1px solid #c9a27a;border-radius:3mm;padding:8mm 8mm 7mm;position:relative;background:rgb(0 0 0 / .18)">
+        <div style="position:absolute;inset:2mm;border:1px solid rgb(201 162 122 / .4);border-radius:2mm;pointer-events:none"></div>
+        <div class="eyebrow" style="color:#c9a27a;text-align:center">· Est. for sellers · 2026 ·</div>
+        <div style="display:flex;justify-content:center;margin:5mm 0 3mm"><svg width="26mm" height="26mm"><use href="#mark"/></svg></div>
+        <div style="font-family:var(--serif);font-weight:700;font-size:40pt;letter-spacing:-0.02em;text-align:center;line-height:1;color:#f3e1b0">Coin<span style="color:#2fb59a">Lens</span></div>
+        <div style="font-family:var(--serif);font-style:italic;font-size:14pt;text-align:center;color:#e2cfa8;margin-top:3mm">Know what you’re holding.</div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,#c9a27a,transparent);margin:6mm 0 4mm"></div>
+        <div class="cols c3" style="gap:3mm;text-align:center">
+          <div><div class="eyebrow" style="color:#c9a27a">Identify</div><div class="small" style="color:#e2cfa8">Any coin, any angle</div></div>
+          <div><div class="eyebrow" style="color:#c9a27a">Grade</div><div class="small" style="color:#e2cfa8">Honest, in plain words</div></div>
+          <div><div class="eyebrow" style="color:#c9a27a">Price</div><div class="small" style="color:#e2cfa8">What it actually sold for</div></div>
+        </div>
+      </div>
+      <p class="xs" style="color:#c9a27a;margin-top:3mm">A flyer header in Direction D. Fraunces may use italic; Bricolage never does.</p>
+    </div>
+  </div>
+  <div class="footer" style="color:#c9a27a"><span>CoinLens Brand Guide</span><span>16</span></div>
+</section>
+
+<!-- ============ 17. DIRECTION E ============ -->
+<section class="page grain" style="background:#04211b;color:#f3ede1;background-image:radial-gradient(70% 60% at 20% 10%, rgb(79 209 181 / .35), transparent 70%),radial-gradient(40% 40% at 100% 100%, rgb(243 225 176 / .14), transparent 65%)">
+  <div class="eyebrow" style="color:#8fe3cf">Direction E · Loud</div>
+  <h2 style="color:#bff0e4">Signal</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap:12mm">
+    <div>
+      <p class="lede" style="color:#d6f5ec">Patina turned all the way up for places where you have one second to win attention. Deep teal replaces obsidian, headlines get huge, numbers get enormous, and the brass becomes a pale highlight rather than a gradient.</p>
+      <table class="small" style="color:#d6f5ec">
+        <tr><th style="color:#8fe3cf;border-color:#145a4e">Mood</th><td style="border-color:#145a4e">A lens catching the light. Fast, bright, confident.</td></tr>
+        <tr><th style="color:#8fe3cf;border-color:#145a4e">Surface</th><td style="border-color:#145a4e">Deep teal #04211b with a strong patina glow</td></tr>
+        <tr><th style="color:#8fe3cf;border-color:#145a4e">Type</th><td style="border-color:#145a4e">Bricolage 800 at display sizes, condensed via the width axis; Geist Mono captions</td></tr>
+        <tr><th style="color:#8fe3cf;border-color:#145a4e">Accent</th><td style="border-color:#145a4e">patina-200 #bff0e4 for text, gold-200 #f3e1b0 for the price</td></tr>
+        <tr><th style="color:#8fe3cf;border-color:#145a4e">Texture</th><td style="border-color:#145a4e">Grain, scan-line reticle sweeps, the mark spinning</td></tr>
+        <tr><th style="color:#8fe3cf;border-color:#145a4e">Use for</th><td style="border-color:#145a4e">TikTok / Reels / Shorts, app-store caption frames, launch posts, OOH if ever</td></tr>
+      </table>
+      <div class="do" style="margin-top:4mm;border-color:#4fd1b5;background:rgb(79 209 181 / .12)"><span class="tag" style="color:#bff0e4">Rule</span><div class="small" style="color:#d6f5ec">Still only one brass element per frame, and it is still the money. The colour rule survives even here.</div></div>
+    </div>
+    <div style="display:flex;gap:5mm">
+      <div style="width:62mm;aspect-ratio:9/16;border-radius:5mm;background:#04211b;border:1px solid #145a4e;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:6mm;background-image:radial-gradient(80% 50% at 50% 0%, rgb(79 209 181 / .45), transparent 70%)">
+        <div class="eyebrow" style="color:#8fe3cf">Found in a coffee can</div>
+        <div>
+          <div style="font-family:var(--display);font-weight:800;font-size:30pt;letter-spacing:-0.05em;line-height:.9;color:#bff0e4;font-stretch:90%">That dusty dollar?</div>
+          <div style="font-family:var(--display);font-weight:800;font-size:56pt;letter-spacing:-0.05em;line-height:.9;color:#f3e1b0;margin-top:3mm;font-variant-numeric:tabular-nums">$184</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:2mm"><svg width="8mm" height="8mm"><use href="#mark"/></svg><span class="wordmark" style="font-size:12pt;color:#f3ede1">Coin<span style="color:#bff0e4">Lens</span></span></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4mm">
+        <div style="border-radius:4mm;background:#0c0a08;border:1px solid #145a4e;padding:5mm">
+          <div class="eyebrow" style="color:#8fe3cf">Caption frame</div>
+          <div style="font-family:var(--display);font-weight:800;font-size:20pt;letter-spacing:-0.045em;line-height:.95;color:#bff0e4;margin-top:2mm">Two photos.<br>Priced in seconds.</div>
+        </div>
+        <div style="border-radius:4mm;background:#bff0e4;color:#04211b;padding:5mm">
+          <div class="eyebrow" style="color:#1f8a76">Inverted frame</div>
+          <div style="font-family:var(--display);font-weight:800;font-size:20pt;letter-spacing:-0.045em;line-height:.95;margin-top:2mm">Stop guessing.<br>Start listing.</div>
+        </div>
+        <p class="xs" style="color:#8fe3cf;margin:0">Vertical video end-card and two caption frames. Huge type, one number, mark small in the corner.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer" style="color:#8fe3cf"><span>CoinLens Brand Guide</span><span>17</span></div>
+</section>
+
+<!-- ============ 18. APPLICATIONS ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">11 · Applications</div>
+  <h2>Where it shows up</h2>
+  <div class="cols c4" style="gap:5mm">
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">App icon</div>
+      <div style="display:flex;gap:3mm;align-items:center;margin-top:3mm">
+        <img src="img/apple-icon.png" style="width:18mm;border-radius:4mm" alt="" />
+        <img src="img/apple-icon.png" style="width:11mm;border-radius:2.5mm" alt="" />
+        <img src="img/apple-icon.png" style="width:7mm;border-radius:1.6mm" alt="" />
+      </div>
+      <p class="xs muted" style="margin:3mm 0 0">Ink field to the edge, mark centred at 76% of the tile. Already shipped as apple-icon and icon.svg.</p>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Share card (1200×630)</div>
+      <img class="shot" src="img/og.jpg" style="width:100%;margin-top:3mm" alt="" />
+      <p class="xs muted" style="margin:3mm 0 0">Mark left on a soft glow, wordmark and tagline right, mono eyebrow. Direction A only.</p>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">eBay store banner</div>
+      <div style="margin-top:3mm;height:22mm;border-radius:2.5mm;background:#f3ede1;color:#0c0a08;display:flex;align-items:center;gap:3mm;padding:0 4mm">
+        <svg width="12mm" height="12mm"><use href="#mark"/></svg>
+        <div><div class="wordmark" style="font-size:14pt">Coin<span style="color:#1f8a76">Lens</span> <span style="font-family:var(--sans);font-weight:500;font-size:9pt;color:#4a4336">Certified listings</span></div><div class="xs" style="color:#7a7260">Every coin graded, photographed and priced against real sold comps.</div></div>
+      </div>
+      <p class="xs muted" style="margin:3mm 0 0">Direction B. Light so it sits well inside eBay’s white chrome.</p>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">2×2 flip insert &amp; sticker</div>
+      <div style="display:flex;gap:3mm;margin-top:3mm;align-items:center">
+        <div style="width:22mm;height:22mm;background:#fff;color:#000;border-radius:1mm;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);font-size:5.5pt;line-height:1.5;text-align:center;padding:1.5mm"><svg width="7mm" height="7mm" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#000"/><circle cx="32" cy="32" r="23" fill="#fff"/><circle cx="32" cy="32" r="15.5" fill="none" stroke="#000" stroke-width="2.2"/><circle cx="32" cy="32" r="2.2" fill="#d4a84b"/></svg><div style="margin-top:1mm">1921-S MORGAN<br>VF-20 · 26.73 g<br>coinlens / CL-0412</div></div>
+        <div style="width:22mm;height:22mm;border-radius:999px;background:#0c0a08;display:flex;align-items:center;justify-content:center;border:1px solid #2e2820"><svg width="16mm" height="16mm"><use href="#mark"/></svg></div>
+      </div>
+      <p class="xs muted" style="margin:3mm 0 0">Direction C for the insert (one-colour press), a die-cut circle sticker of the full mark.</p>
+    </div>
+  </div>
+  <div class="cols c3" style="gap:5mm;margin-top:5mm">
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Email signature</div>
+      <div style="display:flex;gap:3mm;align-items:center;margin-top:3mm"><svg width="9mm" height="9mm"><use href="#mark"/></svg><div class="small"><b>Adrian</b> · CoinLens<br><span class="muted xs">Know what you’re holding. · coinlens-h71x.onrender.com</span></div></div>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Listing photo frame</div>
+      <div style="margin-top:3mm;display:flex;gap:3mm;align-items:center">
+        <div style="width:20mm;height:20mm;border-radius:999px;background:url('img/home.jpg') center/cover;box-shadow:0 0 0 2px rgb(79 209 181 / .6),0 0 0 6px rgb(79 209 181 / .08)"></div>
+        <p class="xs muted" style="margin:0">Enhanced photos ship on ink with the coin-ring. The buyer sees a coin that has been looked at.</p>
+      </div>
+    </div>
+    <div class="card" style="padding:4mm">
+      <div class="eyebrow">Loading &amp; empty states</div>
+      <div style="margin-top:3mm;display:flex;gap:3mm;align-items:center">
+        <div style="width:20mm;height:20mm;border-radius:999px;border:1px dashed rgb(79 209 181 / .7);display:flex;align-items:center;justify-content:center"><svg width="10mm" height="10mm"><use href="#mark"/></svg></div>
+        <p class="xs muted" style="margin:0">The reticle turns, the mark spins. Copy says what is happening in plain words.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>18</span></div>
+</section>
+
+<!-- ============ 19. LOGO PROMPT 1 ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">12 · Logo prompt for ChatGPT</div>
+  <h2>Paste this to generate logo explorations</h2>
+  <div class="cols" style="grid-template-columns: 1.25fr 1fr; gap:10mm">
+    <div>
+      <div class="prompt">Design a logo mark for “CoinLens”, a mobile app that identifies, grades and prices coins from two phone photos and writes the eBay listing. The audience is everyday coin sellers, not academics.
+
+CONCEPT: a coin that is also a jeweller’s loupe. A round antique-brass coin with a finely reeded (milled) edge. Where the portrait would be, there is a dark circular field holding a deep verdigris-green lens with a small bright glint in the upper left. On the dark field, four short cream tick marks at north, east, south and west form a reticle, and a tiny pale-mint dot sits at the exact centre. Brass means “the coin”; green means “looking closely”. Never mix those two roles.
+
+STYLE: flat vector, crisp geometry, perfect circle, upright, no perspective, no 3D render, no bevels, no drop shadow, no text, no letters, no dollar sign, no hands, no magnifying-glass handle. Premium, warm, precise, like a well-made instrument. Think Braun meets a 1921 Morgan dollar.
+
+COLOURS (exact): brass gradient #f3e1b0 → #d4a84b → #8f6619; dark field #0c0a08 (warm near-black, never blue-black); lens radial #2fb59a → #145a4e → #0b2b26 with a #4fd1b5 rim; ticks #f3ede1; centre dot #bff0e4. Background: solid #0c0a08.
+
+OUTPUT: one centred mark, large, on a plain #0c0a08 square, 1:1, with generous empty margin around it. Transparent-background PNG if possible. Also show it once at small size (about 48 px) so I can judge legibility.
+
+Then give me 4 variations in a 2×2 grid: (1) exactly as described; (2) reeding exaggerated, lens larger; (3) ticks extended into a full thin dashed ring just inside the field; (4) a simplified single-colour version in cream #f3ede1 on #0c0a08 for stickers and engraving.</div>
+    </div>
+    <div>
+      <h3>How to run it</h3>
+      <ol class="small" style="padding-left:5mm;line-height:1.7;margin:0 0 4mm">
+        <li>Open ChatGPT with image generation available and paste the whole prompt as one message.</li>
+        <li>Pick the strongest result and reply with one change at a time: “make the lens 15% larger”, “thin the ticks”, “more contrast between brass and field”.</li>
+        <li>When it is close, ask for <b>“the same mark, no changes, on a plain white background”</b> and <b>“…in a single colour, pure white on black”</b> to test it survives.</li>
+        <li>Ask for an SVG or a very high-resolution PNG (at least 2048 px). AI vectors are often messy, so redraw the winner in Figma or Illustrator using the 64-unit spec on page 4.</li>
+      </ol>
+      <h3>Reject it if</h3>
+      <ul class="small" style="padding-left:5mm;line-height:1.7;margin:0 0 4mm">
+        <li>The lens turned gold, or the coin turned green or silver.</li>
+        <li>A magnifying-glass handle, a letter “C”, or a dollar sign crept in.</li>
+        <li>The dark field disappeared (lens directly on brass reads as a button).</li>
+        <li>It is tilted, has perspective, or is glossy 3D.</li>
+        <li>It would not survive at 24 px.</li>
+      </ul>
+      <div class="do"><span class="tag">Tip</span><div class="small">Attach the icon from page 4 or 18 as a reference image and add: “Use the attached as the starting point. Keep its construction and colours exactly; explore only the reeding, tick length and lens size.” That gives you refinement, not reinvention.</div></div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>19</span></div>
+</section>
+
+<!-- ============ 20. LOGO PROMPT 2 (variants) ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">12 · Logo prompt for ChatGPT, continued</div>
+  <h2>Shorter prompts for specific jobs</h2>
+  <div class="cols c2" style="gap:8mm">
+    <div>
+      <div class="eyebrow" style="margin-bottom:2mm">Wordmark lock-up</div>
+      <div class="prompt" style="font-size:8pt">Create a horizontal logo lock-up for “CoinLens”. Left: the mark described below. Right: the word “CoinLens” as one word in a bold, slightly condensed geometric grotesque with tight letter-spacing (like Bricolage Grotesque ExtraBold), “Coin” in warm cream #f3ede1 and “Lens” in verdigris #4fd1b5. Under the word, in small plain type, the tagline “Know what you’re holding.” in muted cream #9a917f. Background #0c0a08. Flat vector, no effects. Mark: an antique-brass coin (#d4a84b) with a reeded edge, a dark #0c0a08 field, a deep green #145a4e lens with a #4fd1b5 rim and glint, four cream reticle ticks and a pale-mint centre dot.</div>
+      <div class="eyebrow" style="margin:5mm 0 2mm">App icon</div>
+      <div class="prompt" style="font-size:8pt">Design an iOS app icon for “CoinLens”. A rounded square filled edge to edge with warm near-black #0c0a08, with a soft verdigris glow top-left and a faint brass glow bottom-right. Centred at about 76% of the width: a brass coin with a reeded edge, dark field, deep green loupe lens with a #4fd1b5 rim and a glint, four short cream ticks, mint centre dot. Flat vector, no text, no bevel, no gloss. Export 1024×1024.</div>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom:2mm">Vintage “Coin Shop” badge (Direction D)</div>
+      <div class="prompt" style="font-size:8pt">Design a round badge logo for “CoinLens” in the style of a 1960s downtown coin shop sign. Oxblood background #2a1014. Outer ring of brass #c9a27a with small dot ornaments and the words “KNOW WHAT YOU’RE HOLDING” set in a spaced serif. Centre: the CoinLens mark (brass reeded coin, dark field, verdigris lens with glint, four ticks, centre dot). Below the ring, “CoinLens” in a high-contrast serif like Fraunces Bold, cream #f3e1b0, with “Lens” in green #2fb59a. Flat, printable, two or three spot colours. No gradients, no gloss.</div>
+      <div class="eyebrow" style="margin:5mm 0 2mm">Mono sticker (Direction C)</div>
+      <div class="prompt" style="font-size:8pt">A single-colour die-cut sticker design: the CoinLens mark reduced to pure white line-and-fill on black. Solid white coin disc with a dashed reeded ring, black field, white lens outline, four white ticks, and one small brass #d4a84b centre dot as the only colour. Clean vector, bold enough to cut at 50 mm. No text.</div>
+      <div class="card" style="margin-top:5mm;padding:4mm">
+        <div class="eyebrow">Words that help</div>
+        <p class="small" style="margin:2mm 0 0"><b>Use:</b> reeded edge, milled rim, loupe, verdigris, antique brass, reticle, flat vector, warm near-black, instrument-like, precise.<br><b>Avoid:</b> magnifying glass (brings a handle), gold coin (brings yellow and a dollar sign), futuristic, neon, glossy, 3D, mascot, crypto.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>20</span></div>
+</section>
+
+<!-- ============ 21. QUICK REFERENCE ============ -->
+<section class="page dark grain">
+  <div class="eyebrow">13 · Quick reference</div>
+  <h2>Everything on one page</h2>
+  <div class="cols c3" style="gap:8mm">
+    <div>
+      <h3>Fixed</h3>
+      <table class="small">
+        <tr><th>Name</th><td>CoinLens (one word, C and L capitals)</td></tr>
+        <tr><th>Tagline</th><td>Know what you’re holding.</td></tr>
+        <tr><th>Eyebrow</th><td>IDENTIFY · GRADE · PRICE · LIST</td></tr>
+        <tr><th>Rule</th><td>Patina = looking &amp; doing. Brass = money &amp; caution.</td></tr>
+        <tr><th>Mark</th><td>Brass reeded coin, ink field, verdigris lens, four ticks, centre dot. 64-unit grid, page 4.</td></tr>
+        <tr><th>Never</th><td>Blue, pure white, italics in Bricolage, red errors, type inside the mark</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Colours</h3>
+      <table class="xs mono" style="--pad:1.3mm;white-space:nowrap">
+        <tr><td>ink-900</td><td>#0c0a08</td><td>cream-100</td><td>#f3ede1</td></tr>
+        <tr><td>ink-800</td><td>#15120e</td><td>cream-300</td><td>#d3cab8</td></tr>
+        <tr><td>ink-600</td><td>#2e2820</td><td>cream-500</td><td>#9a917f</td></tr>
+        <tr><td>patina-200</td><td>#bff0e4</td><td>gold-200</td><td>#f3e1b0</td></tr>
+        <tr><td>patina-400</td><td>#4fd1b5</td><td>gold-400</td><td>#d4a84b</td></tr>
+        <tr><td>patina-500</td><td>#2fb59a</td><td>gold-500</td><td>#b9892e</td></tr>
+        <tr><td>patina-600</td><td>#1f8a76</td><td>gold-600</td><td>#8f6619</td></tr>
+        <tr><td>patina-700</td><td>#145a4e</td><td>gold-700</td><td>#5e400a</td></tr>
+      </table>
+      <p class="xs muted" style="margin-top:2mm">Button text on patina: #04211b. On brass: #1d1303. Direction D oxblood: #2a1014. Direction E teal: #04211b.</p>
+    </div>
+    <div>
+      <h3>Type &amp; files</h3>
+      <table class="small">
+        <tr><th>Display</th><td>Bricolage Grotesque 800, −0.045em</td></tr>
+        <tr><th>Body</th><td>Geist 400 / 500 / 600</td></tr>
+        <tr><th>Ledger</th><td>Geist Mono 500, eyebrows 0.2em caps</td></tr>
+        <tr><th>Vintage only</th><td>Fraunces 600 / 700 (Direction D)</td></tr>
+        <tr><th>Mark source</th><td class="mono xs">src/components/Logo.tsx<br>src/app/icon.svg · public/icon.svg</td></tr>
+        <tr><th>Wordmark</th><td class="mono xs">src/components/Wordmark.tsx</td></tr>
+        <tr><th>Tokens</th><td class="mono xs">src/app/globals.css (@theme)</td></tr>
+        <tr><th>Share card</th><td class="mono xs">src/app/opengraph-image.tsx</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="hairline" style="margin-top:4mm"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6mm">
+    <div style="display:flex;align-items:center;gap:5mm">
+      <svg width="16mm" height="16mm"><use href="#mark"/></svg>
+      <div><div class="wordmark" style="font-size:24pt">Coin<span class="patina">Lens</span></div><div class="xs muted">Know what you’re holding.</div></div>
+    </div>
+    <div class="eyebrow">Brand guide v1.0 · November 2026 · github.com/adrianchromenko/coin-scanner</div>
+  </div>
+  <div class="footer"><span>CoinLens Brand Guide</span><span>21</span></div>
+</section>
+
+</body>
+</html>
