@@ -295,7 +295,7 @@ function CoinDetail() {
         <button
           type="button"
           onClick={() => openSignIn()}
-          className="btn-gold rounded-full px-5 py-2.5 text-sm font-semibold"
+          className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
         >
           Sign in
         </button>
@@ -331,7 +331,7 @@ function CoinDetail() {
                     type="button"
                     onClick={() => changeStatus(s)}
                     className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                      status === s ? "bg-gold-400 text-ink-950" : "bg-white/5 text-cream-300 hover:bg-white/10"
+                      status === s ? "bg-patina-400 text-ink-950" : "bg-white/5 text-cream-300 hover:bg-white/10"
                     }`}
                   >
                     {STATUS_LABEL[s]}
@@ -420,7 +420,7 @@ function CoinDetail() {
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="min-w-0 truncate text-gold-300 underline-offset-4 hover:underline"
+                        className="min-w-0 truncate text-patina-300 underline-offset-4 hover:underline"
                       >
                         {s.title || s.url}
                       </a>
@@ -559,7 +559,7 @@ function CoinDetail() {
                 type="button"
                 onClick={save}
                 disabled={busy !== null || !dirty}
-                className="btn-gold w-full rounded-2xl px-4 py-4 text-base font-semibold"
+                className="btn-primary w-full rounded-2xl px-4 py-4 text-base font-semibold"
               >
                 {busy === "save" ? "Saving…" : flash && !dirty ? `${flash} ✓` : "Save changes"}
               </button>
@@ -575,7 +575,7 @@ function CoinDetail() {
       <header className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Link href="/coins" aria-label="Back to my coins">
-            <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
+            <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
           </Link>
           <div>
             <Link href="/coins" className="text-xs text-cream-500 hover:text-cream-100">

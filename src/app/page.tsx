@@ -11,6 +11,7 @@ import EbayButton from "@/components/EbayButton";
 import ListingForm from "@/components/ListingForm";
 import ListingPreview from "@/components/ListingPreview";
 import Logo from "@/components/Logo";
+import Wordmark from "@/components/Wordmark";
 import PendingScansBanner from "@/components/PendingScansBanner";
 import SaveCoinButton from "@/components/SaveCoinButton";
 import { canvasToJpeg, loadToCanvas, type CropCircle } from "@/lib/autoCrop";
@@ -59,10 +60,10 @@ function Steps({ front, back, done }: { front: boolean; back: boolean; done: boo
         <li key={s.label}>
           <div
             className={`h-1.5 rounded-full transition-all duration-500 ${
-              s.on ? "bg-gold-400 shadow-[0_0_14px_rgba(236,193,79,0.6)]" : "bg-white/10"
+              s.on ? "bg-patina-400 shadow-[0_0_14px_rgba(79,209,181,0.6)]" : "bg-white/10"
             }`}
           />
-          <span className={`eyebrow mt-2 block ${s.on ? "text-gold-300" : ""}`}>{s.label}</span>
+          <span className={`eyebrow mt-2 block ${s.on ? "text-patina-300" : ""}`}>{s.label}</span>
         </li>
       ))}
     </ol>
@@ -82,9 +83,9 @@ function LoadingOverlay({ phase, title = "Examining your coin" }: { phase: numbe
       role="status"
       className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-ink-950/85 px-6 backdrop-blur-md"
     >
-      <div className="perspective relative">
-        <span className="absolute inset-0 animate-pulse-ring rounded-full bg-gold-400/30" />
-        <Logo size={96} className="animate-coin-spin drop-shadow-[0_0_30px_rgba(236,193,79,0.45)]" />
+      <div className="perspective reticle relative">
+        <span className="absolute inset-0 animate-pulse-ring rounded-full bg-patina-400/30" />
+        <Logo size={96} className="animate-coin-spin drop-shadow-[0_0_30px_rgba(79,209,181,0.45)]" />
       </div>
       <div className="text-center">
         <p className="font-display text-2xl font-semibold text-cream-100">{title}</p>
@@ -335,7 +336,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => retake(side)}
-                className="btn-gold shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold"
+                className="btn-primary shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold"
               >
                 Retake {side}
               </button>
@@ -370,7 +371,7 @@ export default function Home() {
                 onDone: () => void identify(),
               })
             }
-            className="btn-gold mt-3 rounded-full px-4 py-2 text-xs font-semibold"
+            className="btn-primary mt-3 rounded-full px-4 py-2 text-xs font-semibold"
           >
             Sign in and scan
           </button>
@@ -397,16 +398,8 @@ export default function Home() {
       )}
 
       <header className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Logo size={44} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
-          <div>
-            <h1 className="font-display text-[28px] font-semibold leading-none tracking-tight">
-              <span className="gold-text">Coin</span>
-              <span className="text-cream-100">Lens</span>
-            </h1>
-            <p className="mt-1 text-xs text-cream-500">Snap. Identify. List.</p>
-          </div>
-        </div>
+        <h1 className="sr-only">CoinLens</h1>
+        <Wordmark size={44} />
         <div className="flex items-center gap-2">
           {front || back || listing ? (
             <button
@@ -418,7 +411,7 @@ export default function Home() {
             </button>
           ) : (
             <Link href="/batch" className="btn-ghost rounded-full px-3.5 py-1.5 text-xs font-medium">
-              Scan a tray
+              Batch
             </Link>
           )}
           <AccountButton />
@@ -465,14 +458,17 @@ export default function Home() {
           <PendingScansBanner onRun={runQueued} busy={status === "loading"} />
           {!front && !back && (
             <div className="animate-fade-up">
-              <h2 className="font-display text-[34px] font-medium leading-[1.05] tracking-tight text-cream-100">
+              <p className="eyebrow mb-3 text-patina-300">Pocket change to paid</p>
+              <h2 className="font-display text-[38px] font-extrabold leading-[0.98] tracking-[-0.035em] text-cream-100">
                 Two photos.
                 <br />
-                <span className="italic gold-text">One ready-to-post listing.</span>
+                <span className="patina-text">One listing,</span>
+                <br />
+                <span className="gold-text">priced to sell.</span>
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-cream-300">
-                Add the front and back of any coin. CoinLens finds and crops the coin, identifies it, grades it,
-                checks recent sold prices, and writes the title, description and item specifics for eBay.
+              <p className="mt-4 max-w-[34ch] text-[15px] leading-relaxed text-cream-300">
+                Front and back of any coin. CoinLens finds it, grades it, checks what the same coin actually sold
+                for, and writes the eBay listing for you.
               </p>
             </div>
           )}
@@ -520,7 +516,7 @@ export default function Home() {
                   setEnhance(e.target.checked);
                   log.info("enhance", e.target.checked ? "Enhancement on" : "Enhancement off");
                 }}
-                className="h-5 w-5 accent-[#ecc14f]"
+                className="h-5 w-5 accent-[#4fd1b5]"
               />
             </label>
           </section>
@@ -542,7 +538,7 @@ export default function Home() {
                 type="button"
                 disabled={!ready}
                 onClick={() => void identify()}
-                className="btn-gold w-full rounded-2xl px-4 py-4 text-base font-semibold"
+                className="btn-primary w-full rounded-2xl px-4 py-4 text-base font-semibold"
               >
                 Identify coin & build listing
               </button>

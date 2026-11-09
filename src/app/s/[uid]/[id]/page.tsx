@@ -30,7 +30,7 @@ function NotShared() {
         The owner hasn&apos;t made it public, or the link is out of date. Ask them for a fresh link, or scan a coin
         of your own.
       </p>
-      <Link href="/" className="btn-gold rounded-full px-5 py-2.5 text-sm font-semibold">
+      <Link href="/" className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold">
         Scan a coin
       </Link>
     </section>
@@ -87,7 +87,7 @@ function SharedCoin() {
         )}
 
         <section className="card p-4">
-          <p className="eyebrow text-gold-300">Grade &amp; value</p>
+          <p className="eyebrow text-patina-300">Grade &amp; value</p>
           <div className="mt-3 grid grid-cols-3 gap-2">
             <div className="rounded-xl bg-black/25 px-3 py-2.5">
               <p className="eyebrow">Grade</p>
@@ -137,12 +137,12 @@ function SharedCoin() {
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-16 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <header className="flex items-center gap-3">
         <Link href="/" aria-label="CoinLens home">
-          <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
+          <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
         </Link>
         <div>
           <p className="text-xs text-cream-500">Shared with CoinLens</p>
           <h1 className="font-display text-[22px] font-semibold leading-tight tracking-tight">
-            <span className="text-gold-400">Coin</span>Lens
+            Coin<span className="patina-text">Lens</span>
           </h1>
         </div>
       </header>
@@ -151,7 +151,7 @@ function SharedCoin() {
 
       <footer className="mt-auto pt-6 text-center text-xs text-cream-500">
         Identified with CoinLens —{" "}
-        <Link href="/" className="font-medium text-gold-300 hover:text-gold-200">
+        <Link href="/" className="font-medium text-patina-300 hover:text-patina-200">
           scan your own coin
         </Link>
       </footer>

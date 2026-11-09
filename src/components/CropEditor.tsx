@@ -79,7 +79,7 @@ export default function CropEditor({ title, src, srcUrl, initial, onDone, onCanc
               </mask>
             </defs>
             <rect width="100%" height="100%" fill="rgba(5,7,12,0.6)" mask="url(#crop-editor-dim)" />
-            <circle cx={circle.cx} cy={circle.cy} r={circle.r} fill="none" stroke="#ecc14f" strokeWidth={Math.max(2, src.width / 300)} />
+            <circle cx={circle.cx} cy={circle.cy} r={circle.r} fill="none" stroke="#4fd1b5" strokeWidth={Math.max(2, src.width / 300)} />
           </svg>
         </div>
         <label className="flex items-center gap-3 text-sm">
@@ -90,7 +90,7 @@ export default function CropEditor({ title, src, srcUrl, initial, onDone, onCanc
             max={Math.round(minDim * 0.5)}
             value={Math.round(circle.r)}
             onChange={(e) => setCircle({ ...circle, r: Number(e.target.value) })}
-            className="w-full accent-gold-400"
+            className="w-full accent-patina-400"
           />
         </label>
         <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export default function CropEditor({ title, src, srcUrl, initial, onDone, onCanc
           <button
             type="button"
             onClick={() => onDone({ ...circle, detected: true })}
-            className="btn-gold flex-1 rounded-xl px-4 py-3.5 text-base font-semibold"
+            className="btn-primary flex-1 rounded-xl px-4 py-3.5 text-base font-semibold"
           >
             Use this crop
           </button>

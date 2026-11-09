@@ -1,28 +1,50 @@
 @import "tailwindcss";
 
+/*
+  CoinLens identity: "obsidian & verdigris".
+  - ink:    warm near-black surfaces (obsidian), never blue.
+  - cream:  warm paper type.
+  - patina: verdigris green, the colour of old copper. Used for the lens, focus,
+            progress, links and the primary action: everything about *looking*.
+  - gold:   antique brass. Used for money and value only, so a price always
+            reads as a price.
+  Display type is Bricolage Grotesque; labels and numbers use the mono face,
+  like a ledger.
+*/
 @theme {
-  --color-ink-950: #05070c;
-  --color-ink-900: #0a0e18;
-  --color-ink-800: #111727;
-  --color-ink-700: #1b2336;
-  --color-ink-600: #2a3450;
-  --color-cream-100: #f4efe4;
-  --color-cream-300: #d6cfbf;
-  --color-cream-500: #a39b89;
-  --color-gold-200: #fbe9b0;
-  --color-gold-300: #f6d77a;
-  --color-gold-400: #ecc14f;
-  --color-gold-500: #d9a62b;
-  --color-gold-600: #b0821a;
-  --color-gold-700: #7d5a0e;
+  --color-ink-950: #070605;
+  --color-ink-900: #0c0a08;
+  --color-ink-800: #15120e;
+  --color-ink-700: #201b15;
+  --color-ink-600: #2e2820;
+
+  --color-cream-100: #f3ede1;
+  --color-cream-300: #d3cab8;
+  --color-cream-500: #9a917f;
+
+  --color-patina-200: #bff0e4;
+  --color-patina-300: #8fe3cf;
+  --color-patina-400: #4fd1b5;
+  --color-patina-500: #2fb59a;
+  --color-patina-600: #1f8a76;
+  --color-patina-700: #145a4e;
+
+  --color-gold-200: #f3e1b0;
+  --color-gold-300: #e8c874;
+  --color-gold-400: #d4a84b;
+  --color-gold-500: #b9892e;
+  --color-gold-600: #8f6619;
+  --color-gold-700: #5e400a;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
   --animate-coin-spin: coin-spin 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   --animate-fade-up: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+  --animate-reticle: reticle-spin 14s linear infinite;
+  --animate-reticle-rev: reticle-spin 22s linear infinite reverse;
 
   @keyframes coin-spin {
     from { transform: rotateY(0deg); }
@@ -36,6 +58,10 @@
     0% { transform: scale(0.9); opacity: 0.6; }
     100% { transform: scale(1.6); opacity: 0; }
   }
+  @keyframes reticle-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 }
 
 html {
@@ -45,44 +71,89 @@ html {
 
 body {
   min-height: 100%;
+  isolation: isolate;
   background-color: var(--color-ink-900);
   background-image:
-    radial-gradient(70% 45% at 50% -5%, rgb(236 193 79 / 0.22) 0%, rgb(236 193 79 / 0) 70%),
-    radial-gradient(45% 35% at 110% 105%, rgb(236 193 79 / 0.08) 0%, transparent 60%);
+    radial-gradient(60% 40% at 15% -10%, rgb(79 209 181 / 0.16) 0%, rgb(79 209 181 / 0) 70%),
+    radial-gradient(50% 35% at 110% 100%, rgb(212 168 75 / 0.10) 0%, transparent 65%);
   color: var(--color-cream-100);
   font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Glass card */
-.card {
-  border-radius: 1.5rem;
-  border: 1px solid rgb(255 255 255 / 0.08);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.055), rgb(255 255 255 / 0.02));
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.05),
-    0 24px 60px -36px rgb(0 0 0 / 0.9);
+/* Film grain over the whole canvas; sits under the content, above the background. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
 }
 
-/* Gold primary button */
-.btn-gold {
-  position: relative;
-  background: linear-gradient(135deg, #fbe9b0 0%, #ecc14f 38%, #d9a62b 72%, #b0821a 100%);
-  color: #1a1203;
+::selection {
+  background: rgb(79 209 181 / 0.35);
+  color: var(--color-cream-100);
+}
+
+/* Display type: tight, slightly condensed, with Bricolage's optical sizing on. */
+.font-display {
+  font-variation-settings: "opsz" 48;
+  letter-spacing: -0.02em;
+}
+
+/* Tabular numerals wherever money or counts appear. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Card: obsidian glass with a hairline top light. */
+.card {
+  border-radius: 1.25rem;
+  border: 1px solid rgb(255 255 255 / 0.07);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.015)),
+    rgb(21 18 14 / 0.6);
   box-shadow:
-    0 14px 34px -12px rgb(236 193 79 / 0.65),
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 24px 60px -36px rgb(0 0 0 / 0.95);
+}
+
+/* Primary button: verdigris. The thing you press to look at a coin. */
+.btn-primary {
+  position: relative;
+  background: linear-gradient(135deg, #bff0e4 0%, #4fd1b5 40%, #2fb59a 75%, #1f8a76 100%);
+  color: #04211b;
+  box-shadow:
+    0 14px 34px -12px rgb(79 209 181 / 0.6),
     inset 0 1px 0 rgb(255 255 255 / 0.55);
   transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
-.btn-gold:active:not(:disabled) {
+.btn-primary:active:not(:disabled) {
   transform: translateY(1px) scale(0.99);
-  box-shadow: 0 8px 20px -10px rgb(236 193 79 / 0.6);
+  box-shadow: 0 8px 20px -10px rgb(79 209 181 / 0.55);
 }
-.btn-gold:disabled {
-  filter: grayscale(0.6);
-  opacity: 0.45;
+.btn-primary:disabled {
+  filter: grayscale(0.7);
+  opacity: 0.4;
   box-shadow: none;
 }
+
+/* Brass button: used only where the action is about money (list it, sell it). */
+.btn-brass {
+  position: relative;
+  background: linear-gradient(135deg, #f3e1b0 0%, #d4a84b 40%, #b9892e 75%, #8f6619 100%);
+  color: #1d1303;
+  box-shadow:
+    0 14px 34px -12px rgb(212 168 75 / 0.6),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+  transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-brass:active:not(:disabled) { transform: translateY(1px) scale(0.99); }
+.btn-brass:disabled { filter: grayscale(0.7); opacity: 0.4; box-shadow: none; }
 
 /* Ghost / secondary button */
 .btn-ghost {
@@ -94,8 +165,17 @@ body {
 .btn-ghost:hover { background: rgb(255 255 255 / 0.07); border-color: rgb(255 255 255 / 0.2); }
 .btn-ghost:active { transform: translateY(1px); }
 
+/* Brass text: prices and values. */
 .gold-text {
-  background: linear-gradient(120deg, #fbe9b0 0%, #ecc14f 45%, #d9a62b 100%);
+  background: linear-gradient(120deg, #f3e1b0 0%, #d4a84b 45%, #b9892e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Verdigris text: emphasis in headlines and the wordmark. */
+.patina-text {
+  background: linear-gradient(120deg, #bff0e4 0%, #4fd1b5 45%, #2fb59a 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -103,7 +183,7 @@ body {
 
 .hairline {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(236 193 79 / 0.45), transparent);
+  background: linear-gradient(90deg, transparent, rgb(79 209 181 / 0.45), transparent);
 }
 
 /* Dark form controls */
@@ -121,24 +201,59 @@ body {
 }
 .input-dark::placeholder { color: var(--color-cream-500); }
 .input-dark:focus {
-  border-color: rgb(236 193 79 / 0.65);
-  box-shadow: 0 0 0 3px rgb(236 193 79 / 0.18);
+  border-color: rgb(79 209 181 / 0.7);
+  box-shadow: 0 0 0 3px rgb(79 209 181 / 0.18);
 }
 select.input-dark option { background: var(--color-ink-800); }
 
+/* Small labels: mono, spaced, like engraving on a rim. */
 .eyebrow {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-cream-500);
 }
 
+/* Ring around coin photos: a loupe's bezel. */
 .coin-ring {
   box-shadow:
-    0 0 0 2px rgb(236 193 79 / 0.55),
-    0 0 0 6px rgb(236 193 79 / 0.08),
-    0 18px 40px -16px rgb(236 193 79 / 0.45);
+    0 0 0 2px rgb(79 209 181 / 0.6),
+    0 0 0 6px rgb(79 209 181 / 0.08),
+    0 18px 40px -16px rgb(79 209 181 / 0.4);
+}
+
+/* Reticle: a thin dashed ring with four ticks, drawn around a square element. */
+.reticle {
+  position: relative;
+}
+.reticle::before,
+.reticle::after {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+.reticle::before {
+  border: 1px dashed rgb(79 209 181 / 0.55);
+  animation: var(--animate-reticle);
+}
+.reticle::after {
+  inset: -18%;
+  border: 1px solid rgb(79 209 181 / 0.15);
+  background:
+    linear-gradient(rgb(143 227 207 / 0.9), rgb(143 227 207 / 0.9)) center top / 1px 8% no-repeat,
+    linear-gradient(rgb(143 227 207 / 0.9), rgb(143 227 207 / 0.9)) center bottom / 1px 8% no-repeat,
+    linear-gradient(rgb(143 227 207 / 0.9), rgb(143 227 207 / 0.9)) left center / 8% 1px no-repeat,
+    linear-gradient(rgb(143 227 207 / 0.9), rgb(143 227 207 / 0.9)) right center / 8% 1px no-repeat;
+  animation: var(--animate-reticle-rev);
 }
 
 .perspective { perspective: 800px; }
+
+/* Thin, dark scrollbars on desktop. */
+@media (pointer: fine) {
+  * { scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.14) transparent; }
+}

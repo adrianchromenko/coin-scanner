@@ -51,7 +51,7 @@ function Header({ count }: { count: number | null }) {
   return (
     <header className="flex items-center justify-between gap-3">
       <Link href="/" className="flex items-center gap-3">
-        <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
+        <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
         <div>
           <h1 className="font-display text-[26px] font-semibold leading-none tracking-tight">My coins</h1>
           <p className="mt-1 text-xs text-cream-500">
@@ -222,7 +222,7 @@ export default function CoinsPage() {
         <button
           type="button"
           onClick={() => openSignIn({ reason: "Sign in to see your collection" })}
-          className="btn-gold rounded-full px-5 py-2.5 text-sm font-semibold"
+          className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
         >
           Sign in or create account
         </button>
@@ -240,10 +240,10 @@ export default function CoinsPage() {
         <Logo size={56} className="opacity-70" />
         <h2 className="font-display text-2xl font-semibold">No coins yet</h2>
         <p className="max-w-xs text-sm text-cream-300">
-          Scan a coin and tap <span className="text-gold-300">Save to my coins</span> on the listing to
+          Scan a coin and tap <span className="text-patina-300">Save to my coins</span> on the listing to
           start your collection.
         </p>
-        <Link href="/" className="btn-gold mt-2 rounded-full px-5 py-2.5 text-sm font-semibold">
+        <Link href="/" className="btn-primary mt-2 rounded-full px-5 py-2.5 text-sm font-semibold">
           Scan your first coin
         </Link>
       </section>
@@ -331,7 +331,7 @@ export default function CoinsPage() {
                     role="menuitem"
                     onClick={exportSold}
                     disabled={soldInRange.length === 0}
-                    className="btn-gold mt-2 w-full rounded-xl px-3 py-2 text-xs font-semibold"
+                    className="btn-primary mt-2 w-full rounded-xl px-3 py-2 text-xs font-semibold"
                   >
                     {soldInRange.length === 0
                       ? "No sales in this range"
@@ -353,7 +353,7 @@ export default function CoinsPage() {
               aria-selected={status === f.key}
               onClick={() => setStatus(f.key)}
               className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition ${
-                status === f.key ? "bg-gold-400 text-ink-950" : "bg-white/5 text-cream-300 hover:bg-white/10"
+                status === f.key ? "bg-patina-400 text-ink-950" : "bg-white/5 text-cream-300 hover:bg-white/10"
               }`}
             >
               {f.label}
@@ -374,7 +374,7 @@ export default function CoinsPage() {
                 <li key={c.id}>
                   <Link
                     href={`/coins/${c.id}`}
-                    className="card flex items-center gap-4 p-3 transition hover:border-gold-400/30"
+                    className="card flex items-center gap-4 p-3 transition hover:border-patina-400/30"
                   >
                     <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white">
                       {c.thumb ? (
@@ -401,7 +401,7 @@ export default function CoinsPage() {
                           </span>
                         )}
                         {c.public && (
-                          <span className="rounded-full bg-gold-400/15 px-2 py-0.5 text-[11px] font-medium text-gold-200">
+                          <span className="rounded-full bg-patina-400/15 px-2 py-0.5 text-[11px] font-medium text-patina-200">
                             Shared
                           </span>
                         )}

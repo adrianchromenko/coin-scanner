@@ -100,7 +100,7 @@ export default function PendingScansBanner({ onRun, busy = false }: Props) {
                 type="button"
                 onClick={() => onRunClick(item)}
                 disabled={!online || busy || deleting === item.id}
-                className="btn-gold rounded-full px-3 py-1.5 text-xs font-semibold"
+                className="btn-primary rounded-full px-3 py-1.5 text-xs font-semibold"
               >
                 Run now
               </button>

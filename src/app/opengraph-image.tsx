@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "CoinLens — snap both sides of a coin, get an eBay-ready listing";
+export const alt = "CoinLens — know what you're holding. Snap both sides of a coin, get a priced eBay-ready listing.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -14,24 +14,25 @@ export default function Image() {
           height: "100%",
           display: "flex",
           alignItems: "center",
-          background: "linear-gradient(135deg, #0a0e18 0%, #111827 60%, #0a0e18 100%)",
-          color: "#f6efe0",
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          padding: "0 80px",
+          background:
+            "radial-gradient(60% 50% at 10% 0%, rgba(79,209,181,0.22) 0%, rgba(79,209,181,0) 70%), radial-gradient(50% 40% at 100% 100%, rgba(212,168,75,0.16) 0%, rgba(212,168,75,0) 70%), #0c0a08",
+          color: "#f3ede1",
+          fontFamily: "Helvetica, Arial, sans-serif",
+          padding: "0 84px",
         }}
       >
-        {/* Coin mark */}
+        {/* Mark */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 300,
-            height: 300,
+            width: 320,
+            height: 320,
             borderRadius: 9999,
-            background: "radial-gradient(circle at 35% 30%, #ffe9a6 0%, #ecc14f 45%, #a8781c 100%)",
-            boxShadow: "0 0 0 14px rgba(236,193,79,0.18), 0 40px 90px -30px rgba(236,193,79,0.7)",
-            marginRight: 80,
+            background: "linear-gradient(135deg, #f3e1b0 0%, #d4a84b 50%, #8f6619 100%)",
+            boxShadow: "0 0 0 18px rgba(79,209,181,0.10), 0 50px 110px -40px rgba(79,209,181,0.6)",
+            marginRight: 84,
             flexShrink: 0,
           }}
         >
@@ -40,40 +41,59 @@ export default function Image() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 232,
-              height: 232,
+              width: 292,
+              height: 292,
               borderRadius: 9999,
-              border: "6px solid rgba(90,60,10,0.45)",
+              border: "11px dashed rgba(58,40,5,0.55)",
             }}
           >
             <div
               style={{
                 display: "flex",
-                width: 120,
-                height: 120,
+                alignItems: "center",
+                justifyContent: "center",
+                width: 240,
+                height: 240,
                 borderRadius: 9999,
-                border: "14px solid #0a0e18",
-                background: "rgba(10,14,24,0.08)",
+                background: "#0c0a08",
               }}
-            />
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 160,
+                  height: 160,
+                  borderRadius: 9999,
+                  border: "9px solid #4fd1b5",
+                  background: "radial-gradient(circle at 35% 30%, #2fb59a 0%, #145a4e 55%, #0b2b26 100%)",
+                }}
+              >
+                <div style={{ display: "flex", width: 22, height: 22, borderRadius: 9999, background: "#bff0e4" }} />
+              </div>
+            </div>
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 108, fontWeight: 700, letterSpacing: -3, lineHeight: 1 }}>
-            <span style={{ color: "#ecc14f" }}>Coin</span>
-            <span>Lens</span>
+          <div style={{ display: "flex", fontSize: 120, fontWeight: 800, letterSpacing: -6, lineHeight: 1 }}>
+            <span>Coin</span>
+            <span style={{ color: "#4fd1b5" }}>Lens</span>
           </div>
-          <div style={{ marginTop: 22, fontSize: 40, lineHeight: 1.25, color: "#e8dfc8", maxWidth: 640 }}>
-            Two photos. One ready-to-post eBay listing.
+          <div style={{ marginTop: 26, fontSize: 42, lineHeight: 1.2, color: "#f3ede1", maxWidth: 640, fontWeight: 500 }}>
+            Know what you&apos;re holding.
+          </div>
+          <div style={{ marginTop: 18, fontSize: 28, lineHeight: 1.35, color: "#d3cab8", maxWidth: 640 }}>
+            Two photos. A graded, priced, ready-to-post eBay listing.
           </div>
           <div
             style={{
-              marginTop: 34,
-              fontSize: 26,
-              color: "#a39b88",
-              fontFamily: "Helvetica, Arial, sans-serif",
-              letterSpacing: 2,
+              marginTop: 36,
+              fontSize: 22,
+              color: "#9a917f",
+              fontFamily: "Menlo, Consolas, monospace",
+              letterSpacing: 5,
               textTransform: "uppercase",
             }}
           >

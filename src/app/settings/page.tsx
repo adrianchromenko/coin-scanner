@@ -59,7 +59,7 @@ export default function SettingsPage() {
       <header className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Link href="/coins" aria-label="Back to my coins">
-            <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
+            <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
           </Link>
           <div>
             <Link href="/coins" className="text-xs text-cream-500 hover:text-cream-100">
@@ -125,7 +125,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={onSave}
                   disabled={busy || !dirty}
-                  className="btn-gold rounded-full px-5 py-2.5 text-sm font-semibold"
+                  className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
                 >
                   {busy ? "Saving…" : "Save template"}
                 </button>
@@ -144,7 +144,7 @@ export default function SettingsPage() {
         {/* Live preview */}
         <section>
           <div className="mb-2 flex items-center justify-between px-1">
-            <p className="eyebrow text-gold-300">Preview</p>
+            <p className="eyebrow text-patina-300">Preview</p>
             <p className="text-xs text-cream-500">Sample description with your template</p>
           </div>
           <div className="rounded-3xl bg-white p-5 text-zinc-900">
@@ -186,7 +186,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={() => openSignIn({ reason: "Sign in to sync your settings" })}
-                className="btn-gold rounded-full px-4 py-2 text-xs font-semibold"
+                className="btn-primary rounded-full px-4 py-2 text-xs font-semibold"
               >
                 Sign in
               </button>

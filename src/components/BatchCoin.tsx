@@ -224,7 +224,7 @@ export default function BatchCoin({
         <div className="flex items-center gap-2">
           <span
             className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
-              inProgress ? "bg-gold-400 text-ink-950" : "border border-white/15 text-cream-300"
+              inProgress ? "bg-patina-400 text-ink-950" : "border border-white/15 text-cream-300"
             }`}
           >
             {inProgress ? <Spinner className="h-3.5 w-3.5" /> : n}
@@ -236,7 +236,7 @@ export default function BatchCoin({
                 slot.status === "error"
                   ? "bg-red-500/15 text-red-200"
                   : inProgress
-                    ? "bg-gold-400/15 text-gold-300"
+                    ? "bg-patina-400/15 text-patina-300"
                     : "bg-white/10 text-cream-300"
               }`}
               role={inProgress ? "status" : undefined}
@@ -301,7 +301,7 @@ export default function BatchCoin({
             type="button"
             onClick={onRetry}
             disabled={busy || !slot.front || !slot.back}
-            className="btn-gold shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold"
+            className="btn-primary shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold"
           >
             Retry
           </button>

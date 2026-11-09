@@ -227,7 +227,7 @@ export default function ListingForm({ listing, onChange, front, back, market, on
             <div className="mt-4 rounded-xl border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-100">
               <p className="font-semibold">A close-up could change the value</p>
               <p className="mt-1 text-amber-100/90">{listing.closeup_reason}</p>
-              <label className={`btn-gold mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold ${closeupBusy ? "pointer-events-none opacity-60" : ""}`}>
+              <label className={`btn-primary mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold ${closeupBusy ? "pointer-events-none opacity-60" : ""}`}>
                 <Icon d={ICON.photo} />
                 {closeupBusy ? "Re-checking…" : "Add a close-up of the date & mint mark"}
                 <input
@@ -264,7 +264,7 @@ export default function ListingForm({ listing, onChange, front, back, market, on
                 <ul className="mt-2 flex flex-col gap-1">
                   {listing.price_sources.slice(0, 6).map((s, i) => (
                     <li key={i} className="flex items-baseline gap-2 text-xs">
-                      <a href={s.url} target="_blank" rel="noreferrer" className="min-w-0 flex-1 truncate text-gold-300 underline-offset-4 hover:underline">
+                      <a href={s.url} target="_blank" rel="noreferrer" className="min-w-0 flex-1 truncate text-patina-300 underline-offset-4 hover:underline">
                         {s.title || s.url}
                       </a>
                       {s.price_usd != null && <span className="shrink-0 text-cream-300">{money(s.price_usd)}</span>}
@@ -278,7 +278,7 @@ export default function ListingForm({ listing, onChange, front, back, market, on
 
           <details className="group mt-4 text-sm">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-cream-300 hover:text-cream-100">
-              <Icon d={ICON.sparkle} className="h-4 w-4 text-gold-400" />
+              <Icon d={ICON.sparkle} className="h-4 w-4 text-patina-400" />
               How it was identified and graded
               <span className="ml-auto text-cream-500 transition-transform group-open:rotate-180">⌄</span>
             </summary>
@@ -298,16 +298,16 @@ export default function ListingForm({ listing, onChange, front, back, market, on
         <button
           type="button"
           onClick={() => copy("Everything", allText)}
-          className="btn-gold flex items-center justify-center gap-2 rounded-2xl px-4 py-4 text-base font-semibold"
+          className="btn-primary flex items-center justify-center gap-2 rounded-2xl px-4 py-4 text-base font-semibold"
         >
           <Icon d={ICON.copy} className="h-5 w-5" />
           Copy everything for eBay
         </button>
         <p className="px-1 text-center text-xs text-cream-500">
           {templated ? (
-            <>Your shipping / returns / footer lines from <Link href="/settings" className="text-gold-300 underline-offset-4 hover:underline">Settings</Link> are added to the description{templateSource === "device" ? " (saved on this device)" : ""}.</>
+            <>Your shipping / returns / footer lines from <Link href="/settings" className="text-patina-300 underline-offset-4 hover:underline">Settings</Link> are added to the description{templateSource === "device" ? " (saved on this device)" : ""}.</>
           ) : (
-            <>Add shipping and returns boilerplate once in <Link href="/settings" className="text-gold-300 underline-offset-4 hover:underline">Settings</Link>.</>
+            <>Add shipping and returns boilerplate once in <Link href="/settings" className="text-patina-300 underline-offset-4 hover:underline">Settings</Link>.</>
           )}
         </p>
         <div className="grid grid-cols-2 gap-2">
@@ -452,7 +452,7 @@ export default function ListingForm({ listing, onChange, front, back, market, on
           <button
             type="button"
             onClick={() => set("item_specifics", [...listing.item_specifics, { name: "", value: "" }])}
-            className="mt-1 self-start text-sm font-medium text-gold-300 underline-offset-4 hover:underline"
+            className="mt-1 self-start text-sm font-medium text-patina-300 underline-offset-4 hover:underline"
           >
             + Add specific
           </button>
@@ -463,7 +463,7 @@ export default function ListingForm({ listing, onChange, front, back, market, on
 
       {copied && (
         <div className="pointer-events-none fixed inset-x-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-50 flex justify-center px-4">
-          <p className="animate-fade-up rounded-full border border-gold-400/40 bg-ink-800/95 px-4 py-2 text-sm font-medium text-gold-200 shadow-xl backdrop-blur">
+          <p className="animate-fade-up rounded-full border border-patina-400/40 bg-ink-800/95 px-4 py-2 text-sm font-medium text-patina-200 shadow-xl backdrop-blur">
             {copied}
           </p>
         </div>

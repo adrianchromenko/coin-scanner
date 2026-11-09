@@ -22,7 +22,7 @@ function Bars({ data, value, format }: { data: UsageReport["days"]; value: (d: U
         return (
           <div key={d.date} className="group relative flex flex-1 flex-col items-center justify-end">
             <div
-              className="w-full rounded-t bg-gold-400/70 transition group-hover:bg-gold-300"
+              className="w-full rounded-t bg-patina-400/70 transition group-hover:bg-patina-300"
               style={{ height: `${Math.max(2, (v / max) * 100)}%` }}
               title={`${d.date}: ${format(v)}`}
             />
@@ -73,7 +73,7 @@ export default function AdminPage() {
     body = (
       <section className="card flex flex-col items-start gap-3 p-6">
         <p className="text-sm text-cream-300">Sign in with an admin account to see usage.</p>
-        <button type="button" onClick={() => openSignIn()} className="btn-gold rounded-full px-5 py-2.5 text-sm font-semibold">
+        <button type="button" onClick={() => openSignIn()} className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold">
           Sign in
         </button>
       </section>

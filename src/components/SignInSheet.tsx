@@ -215,7 +215,7 @@ export default function SignInSheet({ reason, onClose }: Props) {
           <button
             type="submit"
             disabled={busy !== null}
-            className="btn-gold mt-1 w-full rounded-2xl px-4 py-3 text-sm font-semibold"
+            className="btn-primary mt-1 w-full rounded-2xl px-4 py-3 text-sm font-semibold"
           >
             {busy === "email"
               ? "One moment…"
@@ -234,13 +234,13 @@ export default function SignInSheet({ reason, onClose }: Props) {
                 Forgot password?
               </button>
               <button type="button" className="hover:text-cream-100" onClick={() => setMode("signup")}>
-                New here? <span className="text-gold-300">Create an account</span>
+                New here? <span className="text-patina-300">Create an account</span>
               </button>
             </>
           )}
           {mode === "signup" && (
             <button type="button" className="ml-auto hover:text-cream-100" onClick={() => setMode("signin")}>
-              Already have an account? <span className="text-gold-300">Sign in</span>
+              Already have an account? <span className="text-patina-300">Sign in</span>
             </button>
           )}
           {mode === "reset" && (

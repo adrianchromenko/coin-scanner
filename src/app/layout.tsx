@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import AuthProvider from "@/components/AuthProvider";
 import InstallPrompt from "@/components/InstallPrompt";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
@@ -8,16 +8,15 @@ import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  axes: ["opsz", "wdth"],
 });
 
-const TITLE = "CoinLens — snap a coin, get an eBay-ready listing";
+const TITLE = "CoinLens — know what you're holding";
 const DESCRIPTION =
-  "Photograph both sides of any coin and CoinLens finds it, crops it, identifies the date, mint and variety, estimates the grade and value, and writes your eBay title, description and item specifics in about a minute.";
+  "Snap both sides of any coin. CoinLens finds it, identifies the date, mint and variety, grades it, checks what the same coin sold for, and writes a ready-to-post eBay listing in about a minute.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -58,7 +57,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0a0e18",
+  themeColor: "#0c0a08",
 };
 
 /**
@@ -115,7 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />

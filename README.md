@@ -1,6 +1,6 @@
 # CoinLens
 
-Mobile web app for coin sellers. Photograph the front and back of a coin on your phone, tap one button, and Claude finds the coin in each photo, crops it, identifies it and fills out an eBay-style listing you can copy, edit, or export.
+**Know what you're holding.** Mobile web app for coin sellers. Photograph the front and back of a coin on your phone, tap one button, and Claude finds the coin in each photo, crops it, identifies it and fills out an eBay-style listing you can copy, edit, or export.
 
 ## Setup
 
@@ -50,7 +50,7 @@ Data model: `users/{uid}/coins/{coinId}` holds the listing, status (saved / list
 
 ## Batch mode
 
-`/batch` ("Scan a tray" on the home screen) takes up to 20 coins, two photos each, scans them one after another with progress, then offers "Save all to my coins" and a single CSV for the whole tray.
+`/batch` ("Batch" on the home screen) takes up to 20 coins, two photos each, scans them one after another with progress, then offers "Save all to my coins" and a single CSV for the whole tray.
 
 ## Listing on eBay with one tap
 

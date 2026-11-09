@@ -194,7 +194,7 @@ export default function EbayButton({ listing, front, back, sku }: Props) {
             href={result.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-gold rounded-full px-4 py-2 text-xs font-semibold"
+            className="btn-primary rounded-full px-4 py-2 text-xs font-semibold"
           >
             View listing
           </a>
@@ -233,7 +233,7 @@ export default function EbayButton({ listing, front, back, sku }: Props) {
           <a
             href="/api/ebay/connect"
             onClick={() => log.info("ebay", "Connect requested")}
-            className="btn-gold shrink-0 rounded-full px-4 py-2 text-xs font-semibold"
+            className="btn-primary shrink-0 rounded-full px-4 py-2 text-xs font-semibold"
           >
             Connect eBay
           </a>
@@ -260,7 +260,7 @@ export default function EbayButton({ listing, front, back, sku }: Props) {
           onClick={() => void list()}
           disabled={listing_ || price < 0.99}
           aria-busy={listing_}
-          className="btn-gold shrink-0 rounded-full px-4 py-2 text-xs font-semibold"
+          className="btn-primary shrink-0 rounded-full px-4 py-2 text-xs font-semibold"
         >
           {listing_ ? (
             <span className="inline-flex items-center gap-2">

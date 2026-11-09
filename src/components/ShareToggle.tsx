@@ -89,7 +89,7 @@ export default function ShareToggle({ uid, coinId, isPublic, onChange }: Props) 
           disabled={saving}
           onClick={toggle}
           className={`relative h-7 w-12 shrink-0 rounded-full transition disabled:opacity-60 ${
-            isPublic ? "bg-gold-400" : "bg-white/15"
+            isPublic ? "bg-patina-400" : "bg-white/15"
           }`}
         >
           <span
@@ -110,7 +110,7 @@ export default function ShareToggle({ uid, coinId, isPublic, onChange }: Props) 
               {copied ? "Copied ✓" : "Copy link"}
             </button>
             {canShare && (
-              <button type="button" onClick={share} className="btn-gold rounded-full px-4 py-1.5 text-xs font-semibold">
+              <button type="button" onClick={share} className="btn-primary rounded-full px-4 py-1.5 text-xs font-semibold">
                 Share…
               </button>
             )}

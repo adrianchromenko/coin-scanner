@@ -94,7 +94,7 @@ export default function SaveCoinButton({ listing, hints, front, back, market = n
             type="button"
             onClick={onClick}
             disabled={state.kind === "saving"}
-            className="btn-gold shrink-0 rounded-full px-4 py-2 text-xs font-semibold"
+            className="btn-primary shrink-0 rounded-full px-4 py-2 text-xs font-semibold"
           >
             {state.kind === "saving" ? "Saving…" : dirty ? "Save changes" : "Save to my coins"}
           </button>

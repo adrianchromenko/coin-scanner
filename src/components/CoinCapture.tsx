@@ -151,7 +151,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
         {!value ? (
           <label
             aria-disabled={busy}
-            className={`group flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-gold-400/35 bg-gold-400/[0.04] px-2 transition-colors active:bg-gold-400/10 ${
+            className={`group flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-patina-400/35 bg-gold-400/[0.04] px-2 transition-colors active:bg-patina-400/10 ${
               busy ? "pointer-events-none opacity-50" : ""
             }`}
           >
@@ -165,7 +165,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
               onClick={() => log.info(`capture:${label}`, "Compact picker opened")}
               onChange={(e) => handleFile(e.target.files?.[0])}
             />
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-400/15 text-gold-300 ring-1 ring-gold-400/30 transition-transform group-active:scale-95">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-patina-400/15 text-patina-300 ring-1 ring-patina-400/30 transition-transform group-active:scale-95">
               <CameraIcon className="h-5 w-5" />
             </span>
             <span className="text-xs font-semibold text-cream-100">{busy ? "Processing…" : label}</span>
@@ -177,11 +177,11 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
             <img
               src={value.srcUrl}
               alt={`${label} photo`}
-              className={`h-full w-full rounded-2xl object-cover ring-2 ${blocked ? "ring-red-400/70" : "ring-gold-400/50"}`}
+              className={`h-full w-full rounded-2xl object-cover ring-2 ${blocked ? "ring-red-400/70" : "ring-patina-400/50"}`}
             />
             <span
               className={`absolute bottom-1.5 left-1.5 flex h-6 w-6 items-center justify-center rounded-full ring-2 ring-ink-900 ${
-                blocked ? "bg-red-500 text-white" : "bg-gold-400 text-ink-950"
+                blocked ? "bg-red-500 text-white" : "bg-patina-400 text-ink-950"
               }`}
               aria-label={blocked ? `${label}: blurry` : `${label}: photo added`}
             >
@@ -224,7 +224,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
         <div className="flex items-center gap-3">
           <span
             className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-              done ? "bg-gold-400 text-ink-950" : "border border-white/15 text-cream-300"
+              done ? "bg-patina-400 text-ink-950" : "border border-white/15 text-cream-300"
             }`}
           >
             {done ? <CheckIcon className="h-4 w-4" /> : step}
@@ -257,7 +257,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
           {/* Labels wrapping the inputs: iOS Safari ignores programmatic clicks on hidden file inputs. */}
           <label
             aria-disabled={busy}
-            className={`group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gold-400/35 bg-gold-400/[0.04] px-4 py-7 transition-colors active:bg-gold-400/10 ${
+            className={`group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-patina-400/35 bg-gold-400/[0.04] px-4 py-7 transition-colors active:bg-patina-400/10 ${
               busy ? "pointer-events-none opacity-50" : ""
             }`}
           >
@@ -271,7 +271,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
               onClick={() => log.info(`capture:${label}`, "Camera picker opened")}
               onChange={(e) => handleFile(e.target.files?.[0])}
             />
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-400/15 text-gold-300 ring-1 ring-gold-400/30 transition-transform group-active:scale-95">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-patina-400/15 text-patina-300 ring-1 ring-patina-400/30 transition-transform group-active:scale-95">
               <CameraIcon className="h-7 w-7" />
             </span>
             <span className="text-base font-semibold text-cream-100">
@@ -300,7 +300,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
           <ul className="mt-1 flex flex-col gap-1.5">
             {TIPS.map((t) => (
               <li key={t.text} className="flex gap-2.5 text-xs leading-relaxed text-cream-500">
-                <span className="w-4 shrink-0 text-center text-gold-400">{t.icon}</span>
+                <span className="w-4 shrink-0 text-center text-patina-400">{t.icon}</span>
                 {t.text}
               </li>
             ))}
@@ -320,12 +320,12 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
                 className={`h-24 w-24 rounded-2xl object-cover ring-2 ${
                   blocked
                     ? "ring-red-400/70"
-                    : "ring-gold-400/50 shadow-[0_12px_30px_-12px_rgba(236,193,79,0.45)]"
+                    : "ring-patina-400/50 shadow-[0_12px_30px_-12px_rgba(79,209,181,0.45)]"
                 }`}
               />
               <span
                 className={`absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full ring-4 ring-ink-900 ${
-                  blocked ? "bg-red-500 text-white" : "bg-gold-400 text-ink-950"
+                  blocked ? "bg-red-500 text-white" : "bg-patina-400 text-ink-950"
                 }`}
               >
                 {blocked ? <span className="text-sm font-bold">!</span> : <CheckIcon className="h-3.5 w-3.5" />}
@@ -353,7 +353,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
                   <li key={c.key} className="flex gap-2 text-sm">
                     <span
                       className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                        c.severity === "block" ? "bg-red-500 text-white" : "bg-gold-400 text-ink-950"
+                        c.severity === "block" ? "bg-red-500 text-white" : "bg-patina-400 text-ink-950"
                       }`}
                     >
                       !
@@ -367,7 +367,7 @@ export default function CoinCapture({ step, label, sublabel, hint, value, onChan
               </ul>
               {blocked ? (
                 <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
-                  <button type="button" onClick={reset} className="btn-gold rounded-xl px-4 py-2.5 text-sm font-semibold">
+                  <button type="button" onClick={reset} className="btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold">
                     Retake photo
                   </button>
                   <button type="button" onClick={useAnyway} className="btn-ghost rounded-xl px-4 py-2.5 text-sm font-medium">

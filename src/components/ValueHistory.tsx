@@ -130,16 +130,16 @@ export default function ValueHistory({ entries, className = "" }: Props) {
             {money(last.suggested)}
           </title>
           {/* Low–high band: a wash, never a block */}
-          <path d={band} fill="#ecc14f" fillOpacity="0.08" />
+          <path d={band} fill="#d4a84b" fillOpacity="0.08" />
           {/* Area under the line */}
-          <path d={area} fill="#ecc14f" fillOpacity="0.10" />
+          <path d={area} fill="#d4a84b" fillOpacity="0.10" />
           {/* Baseline, one step off the surface */}
           <line x1={PAD_X} x2={W - PAD_X} y1={H - PAD_BOTTOM} y2={H - PAD_BOTTOM} stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
           {/* Crosshair */}
           {hover !== null && (
             <line x1={xs[hover]} x2={xs[hover]} y1={PAD_TOP - 4} y2={H - PAD_BOTTOM} stroke="rgba(244,239,228,0.35)" strokeWidth="1" />
           )}
-          <path d={line} fill="none" stroke="#ecc14f" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+          <path d={line} fill="none" stroke="#d4a84b" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
           {/* End markers with a 2px surface ring; intermediate points only when hovered */}
           {points.map((p, i) => {
             const show = i === 0 || i === points.length - 1 || i === hover;
@@ -147,7 +147,7 @@ export default function ValueHistory({ entries, className = "" }: Props) {
             return (
               <g key={p.at}>
                 <circle cx={xs[i]} cy={y(p.suggested)} r="6" fill="#111727" />
-                <circle cx={xs[i]} cy={y(p.suggested)} r="4" fill="#ecc14f" />
+                <circle cx={xs[i]} cy={y(p.suggested)} r="4" fill="#d4a84b" />
               </g>
             );
           })}

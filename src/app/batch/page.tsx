@@ -263,7 +263,7 @@ function BatchTray() {
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 pb-44 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-3">
-          <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(236,193,79,0.35)]" />
+          <Logo size={40} className="drop-shadow-[0_6px_18px_rgba(79,209,181,0.35)]" />
           <div>
             <h1 className="font-display text-[26px] font-semibold leading-none tracking-tight">Batch scan</h1>
             <p className="mt-1 text-xs text-cream-500">Scan a tray of coins</p>
@@ -294,7 +294,7 @@ function BatchTray() {
           <h2 className="font-display text-[30px] font-medium leading-[1.05] tracking-tight text-cream-100">
             Many coins.
             <br />
-            <span className="italic gold-text">One sitting.</span>
+            <span className="patina-text">One sitting.</span>
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-cream-300">
             Add the front and back of each coin on your tray. CoinLens scans them one after another, then
@@ -368,7 +368,7 @@ function BatchTray() {
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                 <div
-                  className="h-full rounded-full bg-gold-400 shadow-[0_0_14px_rgba(236,193,79,0.6)] transition-all duration-500"
+                  className="h-full rounded-full bg-patina-400 shadow-[0_0_14px_rgba(79,209,181,0.6)] transition-all duration-500"
                   style={{ width: `${Math.max(4, progressPct)}%` }}
                 />
               </div>
@@ -379,7 +379,7 @@ function BatchTray() {
                 type="button"
                 disabled={!allReady}
                 onClick={runTray}
-                className="btn-gold w-full rounded-2xl px-4 py-4 text-base font-semibold"
+                className="btn-primary w-full rounded-2xl px-4 py-4 text-base font-semibold"
               >
                 Scan {pending.length} {pending.length === 1 ? "coin" : "coins"}
               </button>
@@ -396,7 +396,7 @@ function BatchTray() {
                     type="button"
                     onClick={onSaveAll}
                     disabled={saving || unsaved.length === 0}
-                    className="btn-gold rounded-2xl px-4 py-3.5 text-sm font-semibold"
+                    className="btn-primary rounded-2xl px-4 py-3.5 text-sm font-semibold"
                   >
                     {saving
                       ? "Saving…"
@@ -408,7 +408,7 @@ function BatchTray() {
                 <button
                   type="button"
                   onClick={downloadCsv}
-                  className={`rounded-2xl px-4 py-3.5 text-sm font-semibold ${enabled ? "btn-ghost" : "btn-gold"}`}
+                  className={`rounded-2xl px-4 py-3.5 text-sm font-semibold ${enabled ? "btn-ghost" : "btn-primary"}`}
                   data-csv="1"
                 >
                   Download CSV for all

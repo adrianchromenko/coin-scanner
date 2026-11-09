@@ -25,10 +25,10 @@ export default function ListingPreview({ listing, front, back, onFixCrop }: Prop
   return (
     <section>
       <div className="mb-2 flex items-center justify-between px-1">
-        <p className="eyebrow text-gold-300">Listing preview</p>
+        <p className="eyebrow text-patina-300">Listing preview</p>
         <p className="text-xs text-cream-500">How buyers will see it</p>
       </div>
-      <div className="overflow-hidden rounded-3xl bg-white text-zinc-900 shadow-[0_30px_80px_-30px_rgba(236,193,79,0.35)]">
+      <div className="overflow-hidden rounded-3xl bg-white text-zinc-900 shadow-[0_30px_80px_-30px_rgba(79,209,181,0.35)]">
         {/* Gallery */}
         <div className="bg-zinc-50 p-4">
           <div className="mx-auto aspect-square w-full max-w-[320px] overflow-hidden rounded-2xl bg-white ring-1 ring-zinc-200">

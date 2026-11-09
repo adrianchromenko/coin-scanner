@@ -130,7 +130,7 @@ export default function InstallPrompt() {
     <div
       role="region"
       aria-label="Install CoinLens"
-      className="animate-fade-up border-b border-gold-500/20 bg-ink-800/90 px-4 py-2 text-xs text-cream-300 backdrop-blur"
+      className="animate-fade-up border-b border-patina-500/20 bg-ink-800/90 px-4 py-2 text-xs text-cream-300 backdrop-blur"
     >
       <div className="mx-auto flex w-full max-w-lg items-center gap-3">
         <span className="min-w-0 flex-1 truncate">
@@ -138,7 +138,7 @@ export default function InstallPrompt() {
           {mode === "ios" && (
             <span className="text-cream-500">
               {" "}
-              — tap <span className="text-gold-300">Share</span> → <span className="text-gold-300">Add to Home Screen</span>
+              — tap <span className="text-patina-300">Share</span> → <span className="text-patina-300">Add to Home Screen</span>
             </span>
           )}
         </span>
@@ -147,7 +147,7 @@ export default function InstallPrompt() {
             type="button"
             onClick={install}
             disabled={installing}
-            className="btn-gold shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
+            className="btn-primary shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
           >
             {installing ? "…" : "Install"}
           </button>

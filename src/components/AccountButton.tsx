@@ -45,7 +45,7 @@ export default function AccountButton() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Account menu"
-        className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-gold-400/50 bg-ink-700 text-sm font-semibold text-gold-200 shadow-[0_0_0_3px_rgba(236,193,79,0.12)]"
+        className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-patina-400/50 bg-ink-700 text-sm font-semibold text-gold-200 shadow-[0_0_0_3px_rgba(79,209,181,0.12)]"
       >
         {user.photoURL ? (
           // eslint-disable-next-line @next/next/no-img-element

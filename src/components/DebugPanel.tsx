@@ -39,7 +39,7 @@ export default function DebugPanel() {
           errors
             ? "border-red-400/60 bg-red-500/20 text-red-200"
             : warns
-              ? "border-gold-400/50 bg-gold-400/15 text-gold-200"
+              ? "border-patina-400/50 bg-patina-400/15 text-patina-200"
               : "border-white/10 bg-ink-800/70 text-cream-500"
         }`}
       >
@@ -63,7 +63,7 @@ export default function DebugPanel() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-full bg-gold-400 px-3 py-1 text-xs font-semibold text-ink-950"
+                className="rounded-full bg-patina-400 px-3 py-1 text-xs font-semibold text-ink-950"
               >
                 Close
               </button>
@@ -78,7 +78,7 @@ export default function DebugPanel() {
                 <li
                   key={e.id}
                   className={`border-b border-white/5 py-1.5 ${
-                    e.level === "error" ? "text-red-300" : e.level === "warn" ? "text-gold-200" : "text-cream-300"
+                    e.level === "error" ? "text-red-300" : e.level === "warn" ? "text-gold-300" : "text-cream-300"
                   }`}
                 >
                   <span className="text-cream-500">{new Date(e.t).toISOString().slice(11, 23)}</span>{" "}
